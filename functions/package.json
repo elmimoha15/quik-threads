@@ -1,0 +1,35 @@
+{
+  "name": "quikthread-backend",
+  "version": "1.0.0",
+  "description": "QuikThread SaaS Backend - Firebase Functions",
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "scripts": {
+    "start": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@deepgram/sdk": "^3.2.0",
+    "@google/generative-ai": "^0.7.1",
+    "busboy": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^4.8.1",
+    "get-audio-duration": "^4.0.1",
+    "openai": "^6.9.0",
+    "twitter-api-v2": "^1.15.2",
+    "uuid": "^13.0.0",
+    "ytdl-core": "^4.11.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0"
+  },
+  "private": true
+}
