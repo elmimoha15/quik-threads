@@ -8,18 +8,22 @@ interface CreditsDisplayProps {
 export default function CreditsDisplay({ usage, onNavigate }: CreditsDisplayProps) {
   if (!usage) return null;
 
+  const creditsUsed = usage.creditsUsed || 0;
+  const maxCredits = usage.maxCredits || 0;
+  const remaining = usage.remaining !== undefined ? usage.remaining : Math.max(0, maxCredits - creditsUsed);
+
   return (
     <div className="inline-flex items-center gap-3 px-6 py-3 bg-card border border-border rounded-xl">
       <Zap className="w-5 h-5 text-yellow-500" />
       <div className="text-left">
         <p className="text-sm font-medium text-foreground">
-          {usage.currentUsage || 0} / {usage.monthlyLimit || 0} credits used
+          {creditsUsed} / {maxCredits} credits used
         </p>
-        {usage.addonCredits > 0 && (
-          <p className="text-xs text-green-600">+{usage.addonCredits} addon credits</p>
+        {remaining > 0 && (
+          <p className="text-xs text-green-600">{remaining} remaining</p>
         )}
       </div>
-      {((usage.currentUsage || 0) + (usage.addonCredits || 0)) >= (usage.monthlyLimit || 0) && (
+      {remaining <= 0 && (
         <div className="ml-2">
           <button
             onClick={() => onNavigate('billing')}

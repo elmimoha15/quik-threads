@@ -9,6 +9,9 @@ interface TweetCardProps {
 }
 
 export default function TweetCard({ tweet, index, userProfile, onCopy }: TweetCardProps) {
+  // Handle both string tweets and object tweets with content property
+  const tweetContent = typeof tweet === 'string' ? tweet : tweet?.content || '';
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -33,16 +36,16 @@ export default function TweetCard({ tweet, index, userProfile, onCopy }: TweetCa
       
       {/* Tweet Content */}
       <div className="mb-4">
-        <p className="text-foreground leading-relaxed whitespace-pre-line">{tweet.content}</p>
+        <p className="text-foreground leading-relaxed whitespace-pre-line">{tweetContent}</p>
         <div className="mt-2 text-xs text-muted-foreground">
-          {tweet.content.length}/280 characters
+          {tweetContent.length}/280 characters
         </div>
       </div>
       
       {/* Tweet Actions */}
       <div className="flex gap-2">
         <button
-          onClick={() => onCopy(tweet.content)}
+          onClick={() => onCopy(tweetContent)}
           className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg transition text-sm font-medium"
         >
           <Copy className="w-4 h-4" />

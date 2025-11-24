@@ -1,91 +1,25 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, Clock, TrendingUp, MoreVertical, Loader2, Trash2 } from 'lucide-react';
+import { Search, Filter, Clock, TrendingUp, Loader2, Trash2, FileText } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 
 interface ThreadsProps {
   onNavigate: (page: string) => void;
 }
 
-const defaultThreads: any[] = [
-  {
-    id: '1',
-    title: 'AI in 2024: What You Need to Know',
-    topic: 'AI in 2024: What You Need to Know',
-    tweets: 8,
-    createdAt: '2 hours ago',
-    engagement: 2450,
-    status: 'published',
-    contentTypes: ['thread'],
-    contentLength: 'medium',
-    threadType: 'educational',
-  },
-  {
-    id: '2',
-    title: 'Building a Successful Podcast',
-    topic: 'Building a Successful Podcast',
-    tweets: 12,
-    createdAt: '1 day ago',
-    engagement: 1820,
-    status: 'published',
-    contentTypes: ['post', 'thread'],
-    contentLength: 'long',
-    threadType: 'tips',
-  },
-  {
-    id: '3',
-    title: 'Content Creation Tips for Beginners',
-    topic: 'Content Creation Tips for Beginners',
-    tweets: 6,
-    createdAt: '3 days ago',
-    engagement: 3100,
-    status: 'published',
-    contentTypes: ['thread'],
-    contentLength: 'short',
-    threadType: 'tips',
-  },
-  {
-    id: '4',
-    title: 'The Future of Social Media Marketing',
-    topic: 'The Future of Social Media Marketing',
-    tweets: 10,
-    createdAt: '5 days ago',
-    engagement: 1650,
-    status: 'draft',
-    contentTypes: ['post'],
-    contentLength: 'medium',
-    threadType: 'promotional',
-  },
-  {
-    id: '5',
-    title: 'How to Grow Your YouTube Channel',
-    topic: 'How to Grow Your YouTube Channel',
-    tweets: 9,
-    createdAt: '1 week ago',
-    engagement: 2890,
-    status: 'published',
-    contentTypes: ['thread'],
-    contentLength: 'medium',
-    threadType: 'story',
-  },
-];
-
 export default function Threads({ onNavigate }: ThreadsProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('all');
-  const [allThreads, setAllThreads] = useState(defaultThreads);
+  const [allThreads, setAllThreads] = useState<any[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [processingThread, setProcessingThread] = useState<any>(null);
 
   useEffect(() => {
-    // Load threads from localStorage
+    // Load threads from localStorage (only real generations, no fake data)
     const threadsData = localStorage.getItem('threads');
     if (threadsData) {
       const savedThreads = JSON.parse(threadsData);
-      // Filter out duplicates by ID and merge with defaults
-      const savedThreadIds = new Set(savedThreads.map((t: any) => t.id));
-      const uniqueDefaults = defaultThreads.filter(t => !savedThreadIds.has(t.id));
-      setAllThreads([...savedThreads, ...uniqueDefaults]);
+      setAllThreads(savedThreads);
     }
 
     // Check for active generation
@@ -110,10 +44,7 @@ export default function Threads({ onNavigate }: ThreadsProps) {
           const threadsData = localStorage.getItem('threads');
           if (threadsData) {
             const savedThreads = JSON.parse(threadsData);
-            // Filter out duplicates by ID and merge with defaults
-            const savedThreadIds = new Set(savedThreads.map((t: any) => t.id));
-            const uniqueDefaults = defaultThreads.filter(t => !savedThreadIds.has(t.id));
-            setAllThreads([...savedThreads, ...uniqueDefaults]);
+            setAllThreads(savedThreads);
           }
         }
       } else {
@@ -228,59 +159,38 @@ export default function Threads({ onNavigate }: ThreadsProps) {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-bold text-foreground">
-                        {thread.topic || thread.title}
+                        {thread.topic || thread.title || 'Untitled Generation'}
                       </h3>
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          thread.status === 'published'
+                          thread.status === 'complete' || thread.status === 'published'
                             ? 'bg-green-100 text-green-700 border border-green-200'
                             : 'bg-yellow-100 text-yellow-700 border border-yellow-200'
                         }`}
                       >
-                        {thread.status}
+                        {thread.status === 'complete' ? 'Complete' : thread.status}
                       </span>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {thread.createdAt}
+                        <Clock className="w-4 h-4 text-blue-500" />
+                        {thread.createdAt || 'Just now'}
                       </span>
-                      {thread.contentTypes && (
-                        <>
-                          <span>•</span>
-                          <span className="flex items-center gap-1">
-                            {thread.contentTypes.includes('post') && thread.contentTypes.includes('thread') 
-                              ? 'Post + Thread' 
-                              : thread.contentTypes.includes('post') 
-                              ? 'X Post' 
-                              : 'Thread'}
-                          </span>
-                        </>
-                      )}
-                      {thread.contentLength && (
-                        <>
-                          <span>•</span>
-                          <span className="capitalize">{thread.contentLength}</span>
-                        </>
-                      )}
-                      {thread.threadType && (
-                        <>
-                          <span>•</span>
-                          <span>{thread.threadType === 'tips' ? 'Quick Tips' : thread.threadType === 'story' ? 'Storytelling' : thread.threadType === 'educational' ? 'Educational' : 'Promotional'}</span>
-                        </>
-                      )}
                       {thread.tweets && (
                         <>
                           <span>•</span>
-                          <span>{thread.tweets} tweets</span>
+                          <span className="flex items-center gap-1">
+                            <FileText className="w-4 h-4 text-purple-500" />
+                            {Array.isArray(thread.tweets) ? thread.tweets.length : thread.tweets} tweets
+                          </span>
                         </>
                       )}
-                      {thread.engagement && (
+                      {thread.hook && (
                         <>
                           <span>•</span>
                           <span className="flex items-center gap-1">
-                            <TrendingUp className="w-4 h-4" />
-                            {thread.engagement.toLocaleString()} engagement
+                            <TrendingUp className="w-4 h-4 text-green-500" />
+                            {thread.hook}
                           </span>
                         </>
                       )}
@@ -292,12 +202,10 @@ export default function Threads({ onNavigate }: ThreadsProps) {
                         e.stopPropagation();
                         setShowDeleteConfirm(thread.id);
                       }}
-                      className="p-2 rounded-lg transition hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+                      className="p-2 rounded-lg transition hover:bg-red-50 text-gray-400 hover:text-red-600"
+                      title="Delete generation"
                     >
                       <Trash2 className="w-5 h-5" />
-                    </button>
-                    <button className="p-2 rounded-lg transition hover:bg-muted">
-                      <MoreVertical className="w-5 h-5 text-muted-foreground" />
                     </button>
                   </div>
                 </div>

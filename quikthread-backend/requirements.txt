@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic[email]
+pydantic-settings
+firebase-admin
+deepgram-sdk
+httpx
+google-generativeai
+python-dateutil
+tweepy
+python-multipart
+ffmpeg-python
+yt-dlp

@@ -23,7 +23,8 @@ interface UsageResponse {
   };
 }
 
-const API_BASE_URL = 'http://localhost:3001/api';
+// API Base URL - will be configured for Python FastAPI backend
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
 class ApiService {
   private async getAuthToken(): Promise<string | null> {
@@ -53,14 +54,26 @@ class ApiService {
       },
     };
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`Making API request to: ${url}`);
     
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
-    }
+    try {
+      const response = await fetch(url, config);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error(`API Error ${response.status}:`, errorData);
+        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+      }
 
-    return response.json();
+      return response.json();
+    } catch (error) {
+      console.error('API Request failed:', error);
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to backend server. Please ensure the backend is running on http://localhost:8000');
+      }
+      throw error;
+    }
   }
 
   // User Profile Management
@@ -77,7 +90,7 @@ class ApiService {
 
   // Usage and Credits
   async getUsage(): Promise<UsageResponse> {
-    return this.request<UsageResponse>('/users/usage');
+    return this.request<UsageResponse>('/users/quota');
   }
 
   // Content Processing
@@ -129,6 +142,42 @@ class ApiService {
   // Job Management
   async getJob(jobId: string): Promise<any> {
     return this.request(`/jobs/${jobId}`);
+  }
+
+  // Health Check
+  async healthCheck(): Promise<any> {
+    const response = await fetch(`${API_BASE_URL.replace('/api', '')}/health`);
+    if (!response.ok) {
+      throw new Error('Backend health check failed');
+    }
+    return response.json();
+  }
+
+  // Test endpoint for connectivity
+  async testConnection(): Promise<any> {
+    return this.request('/test');
+  }
+
+  // Twitter/X Posting
+  async postToTwitter(jobId: string, threadIndex: number): Promise<any> {
+    return this.request('/twitter/post', {
+      method: 'POST',
+      body: JSON.stringify({
+        jobId,
+        threadIndex,
+      }),
+    });
+  }
+
+  // Analytics
+  async getAnalytics(): Promise<any> {
+    return this.request('/analytics');
+  }
+
+  async clearAnalyticsCache(): Promise<any> {
+    return this.request('/analytics/cache', {
+      method: 'DELETE',
+    });
   }
 }
 

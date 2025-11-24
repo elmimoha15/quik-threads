@@ -9,6 +9,7 @@ import StepIndicator from '../components/generator/StepIndicator';
 import TopicStep from '../components/generator/TopicStep';
 import ContentSourceStep from '../components/generator/ContentSourceStep';
 import CustomizeStep from '../components/generator/CustomizeStep';
+import { validateUrl, normalizeUrl, getPlatformDisplayName } from '../utils/urlValidator';
 
 interface GeneratorProps {
   onNavigate: (page: string) => void;
@@ -79,8 +80,12 @@ export default function Generator({ onNavigate }: GeneratorProps) {
     }
 
     // Check if user has credits
-    if (usage && ((usage.currentUsage || 0) >= ((usage.monthlyLimit || 0) + (usage.addonCredits || 0)))) {
-      setError('You have reached your monthly credit limit. Please upgrade your plan or purchase addon credits.');
+    const maxCredits = usage?.maxCredits || 0;
+    const creditsUsed = usage?.creditsUsed || 0;
+    const remaining = usage?.remaining !== undefined ? usage.remaining : Math.max(0, maxCredits - creditsUsed);
+    
+    if (remaining <= 0) {
+      setError('You have reached your monthly credit limit. Please upgrade your plan.');
       return;
     }
 
@@ -91,12 +96,36 @@ export default function Generator({ onNavigate }: GeneratorProps) {
       let result;
 
       if (contentSource === 'file' && file) {
-        result = await apiService.uploadFile(file, topic, aiInstructions);
+        // Upload file first, then process
+        const uploadResult = await apiService.uploadFile(file, topic, aiInstructions);
+        
+        if (!uploadResult.success) {
+          throw new Error(uploadResult.message || 'File upload failed');
+        }
+
+        // Now process the uploaded file
+        result = await apiService.processUrl(uploadResult.fileUrl, topic, aiInstructions);
       } else if (contentSource === 'url' && url) {
-        result = await apiService.processUrl(url, topic, aiInstructions);
+        // Validate URL before processing
+        const validation = validateUrl(url);
+        
+        if (!validation.isValid) {
+          setError(validation.error || 'Invalid URL provided');
+          setIsGenerating(false);
+          return;
+        }
+
+        // Normalize URL (add https:// if missing)
+        const normalizedUrl = normalizeUrl(url);
+        
+        console.log(`Processing ${getPlatformDisplayName(validation.platform)} URL: ${normalizedUrl}`);
+        
+        result = await apiService.processUrl(normalizedUrl, topic, aiInstructions);
       } else {
-        // Topic-only generation
-        result = await apiService.processTopic(topic, aiInstructions);
+        // Topic-only generation - not implemented yet in backend
+        setError('Please upload a file or provide a URL to generate content.');
+        setIsGenerating(false);
+        return;
       }
 
       if (result?.jobId) {
@@ -120,7 +149,13 @@ export default function Generator({ onNavigate }: GeneratorProps) {
       }
     } catch (error: any) {
       console.error('Generation error:', error);
-      setError(error.message || 'Failed to generate content. Please try again.');
+      
+      // Handle tier restriction errors
+      if (error.message && error.message.includes('exceeds your plan limit')) {
+        setError(error.message);
+      } else {
+        setError(error.message || 'Failed to generate content. Please try again.');
+      }
     } finally {
       setIsGenerating(false);
     }

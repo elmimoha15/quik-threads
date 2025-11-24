@@ -1,0 +1,59 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the resource
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Users collection - users can only read/write their own data
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+    
+    // Jobs collection - users can only read their own jobs
+    match /jobs/{jobId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow write: if false; // Only backend can write
+    }
+    
+    // Posts collection - users can only read their own posts
+    match /posts/{postId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow write: if false; // Only backend can write
+    }
+    
+    // Analytics cache - users can only read their own analytics
+    match /analytics-cache/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Only backend can write
+    }
+    
+    // Error logs - backend only, deny all client access
+    match /error-logs/{logId} {
+      allow read, write: if false;
+    }
+    
+    // Event logs - backend only, deny all client access
+    match /event-logs/{logId} {
+      allow read, write: if false;
+    }
+    
+    // Webhook logs - backend only, deny all client access
+    match /webhook-logs/{logId} {
+      allow read, write: if false;
+    }
+    
+    // Default deny all other paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

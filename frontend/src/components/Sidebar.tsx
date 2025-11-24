@@ -37,9 +37,9 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
         console.error('Error fetching usage:', error);
         // Fallback to mock data if API fails
         setUsage({
-          currentUsage: 0,
-          monthlyLimit: 10,
-          addonCredits: 0,
+          creditsUsed: 0,
+          maxCredits: 2,
+          remaining: 2,
           tier: 'free'
         });
       } finally {
@@ -141,20 +141,20 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs opacity-80">Used this month</span>
                 <span className="text-xs font-medium">
-                  {usage.currentUsage || 0} / {usage.monthlyLimit || 0}
+                  {usage.creditsUsed || 0} / {usage.maxCredits || 0}
                 </span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
                 <div 
                   className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all"
                   style={{ 
-                    width: `${Math.min(((usage.currentUsage || 0) / (usage.monthlyLimit || 1)) * 100, 100)}%` 
+                    width: `${Math.min(((usage.creditsUsed || 0) / (usage.maxCredits || 1)) * 100, 100)}%` 
                   }}
                 />
               </div>
-              {usage.addonCredits > 0 && (
+              {usage.remaining !== undefined && (
                 <p className="text-xs text-green-400">
-                  +{usage.addonCredits} addon credits
+                  {usage.remaining} credits remaining
                 </p>
               )}
             </div>

@@ -1,0 +1,32 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the resource
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // User uploads - users can read/write their own uploaded files
+    match /users/{userId}/uploads/{filename} {
+      allow read, write: if isOwner(userId);
+    }
+    
+    // Fetched files (from URLs) - users can read their own, but only backend can write
+    match /users/{userId}/fetched/{filename} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Only backend can write
+    }
+    
+    // Default deny all other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

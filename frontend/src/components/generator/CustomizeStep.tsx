@@ -95,9 +95,11 @@ export default function CustomizeStep({
         </motion.button>
         <motion.button
           onClick={handleGenerate}
-          disabled={isGenerating || !topic.trim() || (usage && ((usage.currentUsage || 0) >= ((usage.monthlyLimit || 0) + (usage.addonCredits || 0))))}
-          className={`w-full flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg transition ${
-            isGenerating || !topic.trim() || (usage && ((usage.currentUsage || 0) >= ((usage.monthlyLimit || 0) + (usage.addonCredits || 0))))
+          disabled={
+            isGenerating || !topic.trim() || (usage && (usage.remaining !== undefined ? usage.remaining <= 0 : (usage.creditsUsed || 0) >= (usage.maxCredits || 0)))
+          }
+          className={`w-full flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg transition-all ${
+            isGenerating || !topic.trim() || (usage && (usage.remaining !== undefined ? usage.remaining <= 0 : (usage.creditsUsed || 0) >= (usage.maxCredits || 0)))
               ? 'bg-gray-400 cursor-not-allowed text-white'
               : 'bg-primary hover:bg-primary/90 text-primary-foreground'
           }`}
@@ -107,7 +109,7 @@ export default function CustomizeStep({
               <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
               Generating...
             </>
-          ) : usage && ((usage.currentUsage || 0) >= ((usage.monthlyLimit || 0) + (usage.addonCredits || 0))) ? (
+          ) : usage && (usage.remaining !== undefined ? usage.remaining <= 0 : (usage.creditsUsed || 0) >= (usage.maxCredits || 0)) ? (
             <>
               <Zap className="w-6 h-6" />
               No Credits Remaining

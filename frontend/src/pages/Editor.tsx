@@ -108,7 +108,8 @@ export default function Editor({ onNavigate }: EditorProps) {
 
   const postToX = async (threadIndex: number) => {
     if (!canPostToX()) {
-      onNavigate('billing');
+      setError('Posting to X is only available for Pro and Business plans. Please upgrade to continue.');
+      setTimeout(() => onNavigate('billing'), 2000);
       return;
     }
 
@@ -123,14 +124,26 @@ export default function Editor({ onNavigate }: EditorProps) {
 
     try {
       const response = await apiService.postToTwitter(jobData.jobId, threadIndex);
-      setPostSuccess(response.threadUrl);
       
-      // Show success message
-      setTimeout(() => setPostSuccess(null), 5000);
+      if (response.success) {
+        setPostSuccess(response.threadUrl || 'Thread posted successfully!');
+        
+        // Show success message for 5 seconds
+        setTimeout(() => setPostSuccess(null), 5000);
+      } else {
+        throw new Error(response.error || 'Failed to post thread');
+      }
       
     } catch (error: any) {
       console.error('Error posting to X:', error);
-      setError(error.message || 'Failed to post to X. Please try again.');
+      
+      // Handle specific error types
+      if (error.message && error.message.includes('upgrade')) {
+        setError(error.message);
+        setTimeout(() => onNavigate('billing'), 2000);
+      } else {
+        setError(error.message || 'Failed to post to X. Please try again.');
+      }
     } finally {
       setIsPosting(false);
     }

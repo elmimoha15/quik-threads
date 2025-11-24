@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Upload, Link, FileText, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
+import { validateUrl, getPlatformDisplayName } from '../../utils/urlValidator';
 
 interface ContentSourceStepProps {
   setContentSource: (source: 'file' | 'url' | null) => void;
@@ -22,6 +23,9 @@ export default function ContentSourceStep({
   removeFile,
   setCurrentStep
 }: ContentSourceStepProps) {
+  // Validate URL in real-time
+  const urlValidation = url.trim() ? validateUrl(url) : null;
+  
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -60,15 +64,50 @@ export default function ContentSourceStep({
           </div>
 
           {/* URL Input */}
-          <div className="relative mb-6">
-            <Link className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--primary)' }} />
-            <input
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              className="modern-input pl-14 text-lg py-4"
-              placeholder="      Paste your YouTube or podcast link here..."
-            />
+          <div className="mb-6">
+            <div className="relative">
+              <Link className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--primary)' }} />
+              <input
+                type="url"
+                value={url}
+                onChange={(e) => {
+                  setUrl(e.target.value);
+                  // Automatically set content source to 'url' when URL is pasted
+                  if (e.target.value.trim()) {
+                    setContentSource('url');
+                  } else if (!file) {
+                    setContentSource(null);
+                  }
+                }}
+                className="modern-input pl-14 text-lg py-4"
+                placeholder="      Paste your YouTube, TikTok, Spotify, or podcast link here..."
+              />
+            </div>
+            
+            {/* URL Validation Feedback */}
+            {urlValidation && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-2 flex items-center gap-2"
+              >
+                {urlValidation.isValid ? (
+                  <>
+                    <CheckCircle className="w-4 h-4" style={{ color: 'var(--success)' }} />
+                    <span className="text-sm" style={{ color: 'var(--success)' }}>
+                      Valid {getPlatformDisplayName(urlValidation.platform)} URL detected
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="w-4 h-4" style={{ color: 'var(--error)' }} />
+                    <span className="text-sm" style={{ color: 'var(--error)' }}>
+                      {urlValidation.error}
+                    </span>
+                  </>
+                )}
+              </motion.div>
+            )}
           </div>
 
           {/* Divider */}

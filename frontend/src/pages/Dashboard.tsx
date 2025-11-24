@@ -2,65 +2,41 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Plus, Clock, TrendingUp, Loader2 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
-import { UserUsageStats } from '../types/user.types';
+import { useAuth } from '../contexts/AuthContext';
+import { apiService } from '../lib/apiService';
 
 interface DashboardProps {
   onNavigate: (page: string) => void;
 }
 
-const recentPosts = [
-  {
-    id: '1',
-    title: 'AI in 2024: What You Need to Know',
-    tweets: 8,
-    createdAt: '2 hours ago',
-    engagement: 2450,
-  },
-  {
-    id: '2',
-    title: 'Building a Successful Podcast',
-    tweets: 12,
-    createdAt: '1 day ago',
-    engagement: 1820,
-  },
-  {
-    id: '3',
-    title: 'Content Creation Tips for Beginners',
-    tweets: 6,
-    createdAt: '3 days ago',
-    engagement: 3100,
-  },
-];
-
 export default function Dashboard({ onNavigate }: DashboardProps) {
-  // Mock user for display
-  const currentUser = { displayName: 'John Doe', email: 'john@example.com' };
-  const [usage, setUsage] = useState<UserUsageStats | null>(null);
+  const { currentUser, userProfile } = useAuth();
+  const [quotaData, setQuotaData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadUsage();
+    loadQuotaData();
   }, []);
 
-  const loadUsage = async () => {
+  const loadQuotaData = async () => {
     try {
       setLoading(true);
-      // Mock usage data
-      const mockUsage: UserUsageStats = {
-        threads_created: 12,
-        remaining: 18,
-        usage_limit: 30
-      };
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-      setUsage(mockUsage);
-    } catch (err) {
-      console.error('Failed to load usage:', err);
+      const data = await apiService.getUsage();
+      setQuotaData(data);
+    } catch (err: any) {
+      console.error('Failed to load quota:', err);
+      setError(err.message || 'Failed to load usage data');
     } finally {
       setLoading(false);
     }
   };
 
   const userName = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'there';
+  const creditsUsed = quotaData?.creditsUsed || 0;
+  const creditsLimit = quotaData?.maxCredits || 0;
+  const creditsRemaining = quotaData?.remaining || Math.max(0, creditsLimit - creditsUsed);
+  const usagePercentage = creditsLimit > 0 ? (creditsUsed / creditsLimit) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -116,9 +92,9 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--primary)' }} />
               ) : (
                 <>
-                  <p className="text-4xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{usage?.threads_created || 0}</p>
+                  <p className="text-4xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{creditsUsed}</p>
                   <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>
-                    {usage?.remaining === -1 ? 'Unlimited' : `${usage?.remaining || 0} remaining`}
+                    {creditsRemaining} remaining
                   </p>
                 </>
               )}
@@ -160,10 +136,12 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   <Clock className="w-6 h-6" style={{ color: 'var(--primary)' }} />
                 </div>
               </div>
-              <p className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>5 / 30</p>
+              <p className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+                {creditsUsed} / {creditsLimit}
+              </p>
               <div className="w-full rounded-full h-3 bg-slate-100">
                 <div className="h-3 rounded-full" style={{ 
-                  width: '16.67%',
+                  width: `${Math.min(100, usagePercentage)}%`,
                   background: 'var(--gradient-primary)'
                 }} />
               </div>
@@ -175,46 +153,39 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             borderColor: 'var(--card-border)'
           }}>
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Recent X Posts</h2>
-              <button
-                onClick={() => onNavigate('threads')}
-                className="font-semibold hover:underline transition-colors"
-                style={{ color: 'var(--primary)' }}
-              >
-                View All
-              </button>
+              <h2 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Quick Actions</h2>
             </div>
 
-            <div className="space-y-4">
-              {recentPosts.map((post, index) => (
-                <motion.div
-                  key={post.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 * index }}
-                  className="flex items-center justify-between p-6 rounded-xl transition-all cursor-pointer border border-transparent hover:border-slate-200"
-                  style={{
-                    backgroundColor: 'var(--background-secondary)'
-                  }}
-                  whileHover={{ y: -2, boxShadow: 'var(--shadow-md)' }}
-                  onClick={() => onNavigate('editor')}
-                >
-                  <div className="flex-1">
-                    <h3 className="font-bold text-xl mb-3" style={{ color: 'var(--text-primary)' }}>{post.title}</h3>
-                    <div className="flex items-center gap-6 text-sm font-medium" style={{ color: 'var(--text-muted)' }}>
-                      <span>{post.tweets} posts</span>
-                      <span>•</span>
-                      <span>{post.createdAt}</span>
-                      <span>•</span>
-                      <span className="flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4" />
-                        {post.engagement.toLocaleString()} engagement
-                      </span>
-                    </div>
-                  </div>
-                  <div className="text-2xl" style={{ color: 'var(--text-muted)' }}>→</div>
-                </motion.div>
-              ))}
+            <div className="grid md:grid-cols-2 gap-4">
+              <motion.button
+                onClick={() => onNavigate('generator')}
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="p-6 rounded-xl text-left transition-all border border-slate-200 hover:border-blue-300 bg-white hover:shadow-md"
+              >
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: 'var(--primary-100)' }}>
+                  <Plus className="w-6 h-6" style={{ color: 'var(--primary)' }} />
+                </div>
+                <h3 className="font-bold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>Generate New Thread</h3>
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                  Upload audio/video or paste a URL to create engaging X posts
+                </p>
+              </motion.button>
+
+              <motion.button
+                onClick={() => onNavigate('threads')}
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="p-6 rounded-xl text-left transition-all border border-slate-200 hover:border-blue-300 bg-white hover:shadow-md"
+              >
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: 'var(--success-light)' }}>
+                  <Sparkles className="w-6 h-6" style={{ color: 'var(--success)' }} />
+                </div>
+                <h3 className="font-bold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>View All Threads</h3>
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                  Browse and manage your generated X post threads
+                </p>
+              </motion.button>
             </div>
           </div>
         </div>

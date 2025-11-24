@@ -31,24 +31,20 @@ export default function Processing({ onNavigate }: ProcessingProps) {
         const jobStatus = await apiService.getJob(data.jobId);
         
         // Update progress based on job status
-        let newProgress = 0;
+        let newProgress = jobStatus.progress || 0;
         let step = '';
         
         switch (jobStatus.status) {
           case 'processing':
-            newProgress = 10;
+            newProgress = Math.max(newProgress, 10);
             step = 'Queuing your request...';
             break;
-          case 'fetching':
-            newProgress = 25;
-            step = 'Analyzing content...';
-            break;
           case 'transcribing':
-            newProgress = 50;
-            step = 'Extracting key points...';
+            newProgress = Math.max(newProgress, 25);
+            step = 'Transcribing audio...';
             break;
           case 'generating':
-            newProgress = 75;
+            newProgress = Math.max(newProgress, 75);
             step = 'Crafting engaging tweets...';
             break;
           case 'completed':
@@ -65,7 +61,7 @@ export default function Processing({ onNavigate }: ProcessingProps) {
             }, 1000);
             break;
           case 'failed':
-            setError(jobStatus.error?.message || 'Generation failed. Please try again.');
+            setError(jobStatus.error || 'Generation failed. Please try again.');
             step = 'Generation failed';
             break;
           default:
