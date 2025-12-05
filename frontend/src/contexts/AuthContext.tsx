@@ -11,11 +11,21 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider } from '../lib/firebase';
 import { UserService } from '../lib/userService';
+import { apiService } from '../lib/apiService';
 import { UserProfile } from '../types/user';
+import { removeDuplicateThreads } from '../utils/threadUtils';
+
+interface UsageData {
+  creditsUsed: number;
+  maxCredits: number;
+  remaining: number;
+  tier: string;
+}
 
 interface AuthContextType {
   currentUser: FirebaseUser | null;
   userProfile: UserProfile | null;
+  usageData: UsageData | null;
   loading: boolean;
   signup: (email: string, password: string, displayName?: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
@@ -24,6 +34,7 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>;
   updateUserProfile: (displayName: string) => Promise<void>;
   refreshUserProfile: () => Promise<void>;
+  refreshUsageData: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -43,9 +54,36 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [usageData, setUsageData] = useState<UsageData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Function to load usage data
+  const loadUsageData = async () => {
+    try {
+      const data = await apiService.getUsage();
+      // The backend returns QuotaInfo with creditsUsed, maxCredits, remaining
+      setUsageData({
+        creditsUsed: data.creditsUsed || 0,
+        maxCredits: data.maxCredits || 0,
+        remaining: data.remaining || 0,
+        tier: data.tier || 'free'
+      });
+    } catch (error) {
+      console.error('Error loading usage data:', error);
+      // Set fallback data
+      setUsageData({
+        creditsUsed: 0,
+        maxCredits: 2,
+        remaining: 2,
+        tier: 'free'
+      });
+    }
+  };
+
   useEffect(() => {
+    // Clean up duplicate threads on app load
+    removeDuplicateThreads();
+    
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       console.log('Auth state changed:', user ? `User: ${user.email}` : 'No user');
       setCurrentUser(user);
@@ -68,6 +106,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
           
           setUserProfile(profile);
+          
+          // Load usage data once after profile is loaded
+          await loadUsageData();
+          
         } catch (error) {
           console.error('Error with user profile operations:', error);
           
@@ -80,6 +122,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
               const profile = await UserService.createUserProfile(user);
               setUserProfile(profile);
               console.log('Profile created on retry');
+              
+              // Load usage data after retry
+              await loadUsageData();
             } catch (retryError) {
               console.error('Retry failed:', retryError);
             }
@@ -87,6 +132,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
       } else {
         setUserProfile(null);
+        setUsageData(null);
       }
       
       setLoading(false);
@@ -142,9 +188,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  async function refreshUsageData() {
+    await loadUsageData();
+  }
+
   const value: AuthContextType = {
     currentUser,
     userProfile,
+    usageData,
     loading,
     signup,
     login,
@@ -153,6 +204,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     resetPassword,
     updateUserProfile,
     refreshUserProfile,
+    refreshUsageData,
   };
 
   return (

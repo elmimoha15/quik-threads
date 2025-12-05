@@ -12,15 +12,11 @@ interface UserProfile {
 }
 
 interface UsageResponse {
-  currentUsage: number;
-  monthlyLimit: number;
-  addonCredits: number;
+  creditsUsed: number;
+  maxCredits: number;
+  remaining: number;
   tier: string;
-  resetDate: any;
-  features: {
-    analytics: boolean;
-    postToX: boolean;
-  };
+  resetDate: string;
 }
 
 // API Base URL - will be configured for Python FastAPI backend

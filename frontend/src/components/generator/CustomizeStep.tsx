@@ -28,17 +28,17 @@ export default function CustomizeStep({
       className="space-y-8"
     >
       {/* AI Content Guidance */}
-      <div className="bg-white p-8 rounded-2xl border border-slate-100" style={{
-        boxShadow: 'var(--card-shadow)',
-        borderColor: 'var(--card-border)'
+      <div className="p-8 rounded-2xl bg-white" style={{
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
       }}>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--gradient-primary)' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#6b7ba3' }}>
             <Zap className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Content Guidance</h3>
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Describe what kind of content you want, or key points you don't want to miss (optional)</p>
+            <h3 className="text-xl font-bold" style={{ color: '#1a1a1a' }}>Content Guidance</h3>
+            <p className="text-base" style={{ color: '#6b7280' }}>Describe what kind of content you want, or key points you don't want to miss (optional)</p>
           </div>
         </div>
 
@@ -46,10 +46,10 @@ export default function CustomizeStep({
           <textarea
             value={aiInstructions}
             onChange={(e) => setAiInstructions(e.target.value)}
-            className="modern-input min-h-[120px] text-lg py-4 resize-none"
+            className="modern-input min-h-[120px] text-base py-4 resize-none"
             placeholder="e.g., 'Focus on actionable tips for beginners' or 'Make it conversational and include specific examples' or 'Don't forget to mention the pricing strategy'"
           />
-          <div className="absolute bottom-4 right-4 text-sm" style={{ color: 'var(--text-muted)' }}>
+          <div className="absolute bottom-4 right-4 text-sm" style={{ color: '#9ca3af' }}>
             {aiInstructions.length}/500
           </div>
         </div>
@@ -65,11 +65,11 @@ export default function CustomizeStep({
             <button
               key={suggestion}
               onClick={() => setAiInstructions(aiInstructions + (aiInstructions ? ', ' : '') + suggestion.toLowerCase())}
-              className="px-3 py-1.5 text-sm rounded-lg border transition-all hover:scale-105"
+              className="px-3 py-1.5 text-sm rounded-lg transition-all hover:scale-105 hover:bg-opacity-80"
               style={{
-                borderColor: 'var(--card-border)',
-                backgroundColor: 'var(--background-secondary)',
-                color: 'var(--text-secondary)'
+                border: '1px solid #e5e7eb',
+                backgroundColor: '#f9fafb',
+                color: '#1a1a1a'
               }}
             >
               + {suggestion}
@@ -84,11 +84,11 @@ export default function CustomizeStep({
           onClick={() => setCurrentStep(2)}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
-          className="px-8 py-5 rounded-xl font-bold text-xl transition-all"
+          className="px-8 py-5 rounded-xl font-bold text-base transition-all"
           style={{
-            backgroundColor: 'var(--background-secondary)',
-            color: 'var(--text-secondary)',
-            border: '2px solid var(--card-border)'
+            backgroundColor: '#ffffff',
+            color: '#1a1a1a',
+            border: '2px solid #e5e7eb'
           }}
         >
           ← Back
@@ -98,11 +98,16 @@ export default function CustomizeStep({
           disabled={
             isGenerating || !topic.trim() || (usage && (usage.remaining !== undefined ? usage.remaining <= 0 : (usage.creditsUsed || 0) >= (usage.maxCredits || 0)))
           }
-          className={`w-full flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg transition-all ${
-            isGenerating || !topic.trim() || (usage && (usage.remaining !== undefined ? usage.remaining <= 0 : (usage.creditsUsed || 0) >= (usage.maxCredits || 0)))
-              ? 'bg-gray-400 cursor-not-allowed text-white'
-              : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-          }`}
+          whileHover={!isGenerating && topic.trim() ? { scale: 1.02, y: -2 } : {}}
+          whileTap={!isGenerating && topic.trim() ? { scale: 0.98 } : {}}
+          className="w-full flex items-center justify-center gap-3 px-8 py-5 rounded-xl font-bold text-base transition-all text-white"
+          style={{
+            backgroundColor: isGenerating || !topic.trim() || (usage && (usage.remaining !== undefined ? usage.remaining <= 0 : (usage.creditsUsed || 0) >= (usage.maxCredits || 0)))
+              ? '#d1d5db'
+              : '#6b7ba3',
+            boxShadow: (!isGenerating && topic.trim()) ? '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' : 'none',
+            cursor: (isGenerating || !topic.trim() || (usage && (usage.remaining !== undefined ? usage.remaining <= 0 : (usage.creditsUsed || 0) >= (usage.maxCredits || 0)))) ? 'not-allowed' : 'pointer'
+          }}
         >
           {isGenerating ? (
             <>

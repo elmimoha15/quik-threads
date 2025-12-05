@@ -39,20 +39,27 @@ async def process_job_background(job_id: str, request: ProcessRequest, user_id: 
             await job_service.fail_job(job_id, "No audio URL provided")
             return
         
-        # Step 0: Extract direct media URL if needed (0% → 25%)
-        if request.type == "url":
-            logger.info(f"Job {job_id}: Extracting media URL from {audio_url}")
-            await job_service.update_job_progress(job_id, 10, "processing")
+        # Step 0: Extract direct media URL if needed (only for non-YouTube URLs)
+        # YouTube URLs are handled directly by DeepgramService with download-first approach
+        if request.type == "url" and not url_extractor_service.is_social_media_url(audio_url):
+            logger.info(f"Job {job_id}: Checking if URL extraction needed for {audio_url}")
             
-            extraction_result = await url_extractor_service.extract_media_url(audio_url)
-            
-            if not extraction_result["success"]:
-                await job_service.fail_job(job_id, f"URL extraction failed: {extraction_result['error']}")
-                return
-            
-            # Use the extracted direct media URL
-            audio_url = extraction_result["url"]
-            logger.info(f"Job {job_id}: Extracted media URL from {extraction_result.get('platform', 'unknown')} platform")
+            # Only extract if it's not a direct media URL
+            if not url_extractor_service.is_direct_media_url(audio_url):
+                await job_service.update_job_progress(job_id, 10, "processing")
+                
+                extraction_result = await url_extractor_service.extract_media_url(audio_url)
+                
+                if not extraction_result["success"]:
+                    await job_service.fail_job(job_id, f"URL extraction failed: {extraction_result['error']}")
+                    return
+                
+                audio_url = extraction_result["url"]
+                logger.info(f"Job {job_id}: Extracted media URL")
+        
+        # For YouTube/social media URLs, log that we're using direct processing
+        if url_extractor_service.is_social_media_url(audio_url):
+            logger.info(f"Job {job_id}: Processing social media URL directly (download-first approach)")
         
         # Step 1: Transcribe audio (25% → 75%)
         logger.info(f"Job {job_id}: Starting transcription")
@@ -69,22 +76,25 @@ async def process_job_background(job_id: str, request: ProcessRequest, user_id: 
         
         logger.info(f"Job {job_id}: Transcription completed, duration: {duration}s")
         
-        # Step 2: Generate threads (75% → 100%)
-        logger.info(f"Job {job_id}: Starting thread generation")
+        # Step 2: Generate X posts by format (75% → 100%)
+        logger.info(f"Job {job_id}: Starting X post generation")
         await job_service.update_job_progress(job_id, 75, "generating")
         
-        threads_result = await gemini_service.generate_threads(transcript)
+        # Get AI instructions from request data
+        ai_instructions = request.aiInstructions if hasattr(request, 'aiInstructions') else None
         
-        if not threads_result["success"]:
-            await job_service.fail_job(job_id, f"Thread generation failed: {threads_result['error']}")
+        posts_result = await gemini_service.generate_threads(transcript, ai_instructions)
+        
+        if not posts_result["success"]:
+            await job_service.fail_job(job_id, f"X post generation failed: {posts_result['error']}")
             return
         
-        threads = threads_result["threads"]
+        posts = posts_result["posts"]
         
-        logger.info(f"Job {job_id}: Generated {len(threads)} thread options")
+        logger.info(f"Job {job_id}: Generated posts in {len(posts)} formats")
         
         # Step 3: Complete job
-        await job_service.complete_job(job_id, threads, duration)
+        await job_service.complete_job(job_id, posts, duration)
         logger.info(f"Job {job_id}: Completed successfully")
         
     except Exception as e:

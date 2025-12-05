@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, CheckCircle, ArrowRight } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import { apiService } from '../lib/apiService';
+import { jobPollingService } from '../services/jobPollingService';
 
 interface ProcessingProps {
   onNavigate: (page: string) => void;
@@ -13,8 +14,12 @@ export default function Processing({ onNavigate }: ProcessingProps) {
   const [currentStep, setCurrentStep] = useState('');
   const [jobData, setJobData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const isStillOnPageRef = useRef(true);
 
   useEffect(() => {
+    // Mark that we're on the page
+    isStillOnPageRef.current = true;
+    
     // Get job data from localStorage
     const currentJobData = localStorage.getItem('currentJob');
     if (!currentJobData) {
@@ -25,12 +30,39 @@ export default function Processing({ onNavigate }: ProcessingProps) {
     const data = JSON.parse(currentJobData);
     setJobData(data);
     
-    // Start polling job status
-    const pollJobStatus = async () => {
+    // Only start polling if not already active for this job
+    if (!jobPollingService.isJobActive(data.jobId)) {
+      // Start background polling
+      jobPollingService.startPolling(
+        data.jobId,
+        data.title,
+        (result) => {
+          // On completion, update local state
+          setProgress(100);
+          setCurrentStep('Complete!');
+          localStorage.setItem('completedJob', JSON.stringify(result));
+          localStorage.removeItem('currentJob');
+          
+          // Only auto-navigate if user is still on processing page
+          if (isStillOnPageRef.current) {
+            setTimeout(() => {
+              onNavigate('editor');
+            }, 1000);
+          }
+        },
+        (errorMsg) => {
+          // On error, update local state
+          setError(errorMsg);
+          setCurrentStep('Generation failed');
+        }
+      );
+    }
+    
+    // Update local progress by checking job status
+    const updateLocalProgress = async () => {
       try {
         const jobStatus = await apiService.getJob(data.jobId);
         
-        // Update progress based on job status
         let newProgress = jobStatus.progress || 0;
         let step = '';
         
@@ -50,18 +82,9 @@ export default function Processing({ onNavigate }: ProcessingProps) {
           case 'completed':
             newProgress = 100;
             step = 'Complete!';
-            
-            // Store completed job data
-            localStorage.setItem('completedJob', JSON.stringify(jobStatus));
-            localStorage.removeItem('currentJob');
-            
-            // Redirect to editor after completion
-            setTimeout(() => {
-              onNavigate('editor');
-            }, 1000);
             break;
           case 'failed':
-            setError(jobStatus.error || 'Generation failed. Please try again.');
+            newProgress = 0;
             step = 'Generation failed';
             break;
           default:
@@ -72,18 +95,21 @@ export default function Processing({ onNavigate }: ProcessingProps) {
         setCurrentStep(step);
         
       } catch (error: any) {
-        console.error('Error polling job status:', error);
-        setError('Failed to check job status. Please refresh the page.');
+        console.error('Error checking job status:', error);
       }
     };
 
-    // Initial poll
-    pollJobStatus();
+    // Initial update
+    updateLocalProgress();
 
-    // Poll every 2 seconds
-    const interval = setInterval(pollJobStatus, 2000);
+    // Update local progress every 2 seconds
+    const interval = setInterval(updateLocalProgress, 2000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      // Mark that user left the page
+      isStillOnPageRef.current = false;
+    };
   }, [onNavigate]);
 
   return (

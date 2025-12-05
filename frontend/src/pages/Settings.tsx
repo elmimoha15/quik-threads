@@ -74,27 +74,35 @@ export default function Settings({ onNavigate }: SettingsProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: '#f5f5f5' }}>
       <Sidebar currentPage="settings" onNavigate={onNavigate} />
 
       <div className="ml-64 p-8">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-8 text-foreground">Settings</h1>
+          <h1 className="text-4xl font-bold mb-8" style={{ color: '#1a1a1a' }}>Settings</h1>
 
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 text-primary animate-spin" />
+              <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#6b7ba3' }} />
             </div>
           ) : (
             <div className="space-y-6">
               {error && (
-                <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl">
+                <div className="px-4 py-3 rounded-xl" style={{
+                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                  color: '#ef4444'
+                }}>
                   {error}
                 </div>
               )}
               
               {success && (
-                <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 rounded-xl">
+                <div className="px-4 py-3 rounded-xl" style={{
+                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                  color: '#10b981'
+                }}>
                   {success}
                 </div>
               )}
@@ -102,45 +110,60 @@ export default function Settings({ onNavigate }: SettingsProps) {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all"
+                className="bg-white p-8 rounded-xl"
+                style={{
+                  border: '1px solid #e5e7eb',
+                  boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
+                }}
               >
-                <h2 className="text-xl font-bold mb-6 text-foreground">Profile Information</h2>
+                <h2 className="text-xl font-bold mb-6" style={{ color: '#1a1a1a' }}>Profile Information</h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-foreground">
+                    <label className="block text-sm font-medium mb-2" style={{ color: '#1a1a1a' }}>
                       Full Name
                     </label>
                     <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: '#9ca3af' }} />
                       <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-foreground"
+                        className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition"
+                        style={{
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #e5e7eb',
+                          color: '#1a1a1a'
+                        }}
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-foreground">
+                    <label className="block text-sm font-medium mb-2" style={{ color: '#1a1a1a' }}>
                       Email
                     </label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: '#9ca3af' }} />
                       <input
                         type="email"
                         value={profile?.email || ''}
                         disabled
-                        className="w-full pl-12 pr-4 py-3 bg-muted border border-border rounded-xl outline-none transition opacity-60 cursor-not-allowed text-muted-foreground"
+                        className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition opacity-60 cursor-not-allowed"
+                        style={{
+                          backgroundColor: '#f9fafb',
+                          border: '1px solid #e5e7eb',
+                          color: '#6b7280'
+                        }}
                       />
                     </div>
-                    <p className="text-xs mt-1 text-muted-foreground">
+                    <p className="text-xs mt-1" style={{ color: '#6b7280' }}>
                       Email cannot be changed
                     </p>
                   </div>
                   <button 
                     onClick={handleSave}
                     disabled={saving}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-xl font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-6 py-3 rounded-xl font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-white"
+                    style={{ backgroundColor: '#6b7ba3' }}
                   >
                     {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                     {saving ? 'Saving...' : 'Save Changes'}
@@ -152,28 +175,56 @@ export default function Settings({ onNavigate }: SettingsProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all"
+              className="bg-white p-8 rounded-xl"
+              style={{
+                border: '1px solid #e5e7eb',
+                boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
+              }}
             >
-              <h2 className="text-xl font-bold mb-6 text-foreground">AI Preferences</h2>
+              <h2 className="text-xl font-bold mb-6" style={{ color: '#1a1a1a' }}>AI Preferences</h2>
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium mb-3 text-foreground">
+                  <label className="block text-sm font-medium mb-3" style={{ color: '#6b7280' }}>
                     Default Thread Tone
                   </label>
                   <div className="grid grid-cols-3 gap-3">
-                    {['witty', 'professional', 'educational'].map((t) => (
+                    {['Witty', 'Professional', 'Educational'].map((t) => (
                       <button
                         key={t}
-                        onClick={() => setTone(t)}
-                        className={`py-3 px-4 rounded-xl border-2 font-medium transition capitalize ${
-                          tone === t
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border text-foreground hover:border-primary/50 hover:bg-muted/50'
-                        }`}
+                        onClick={() => setTone(t.toLowerCase())}
+                        className="py-3 px-4 rounded-xl font-medium transition capitalize text-white"
+                        style={{
+                          backgroundColor: tone === t.toLowerCase() ? '#6b7ba3' : 'transparent',
+                          border: `2px solid ${tone === t.toLowerCase() ? '#6b7ba3' : '#e5e7eb'}`,
+                          color: tone === t.toLowerCase() ? '#ffffff' : '#1a1a1a'
+                        }}
                       >
                         {t}
                       </button>
                     ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-3" style={{ color: '#6b7280' }}>
+                    AI Creativity Level
+                  </label>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm" style={{ color: '#6b7280' }}>Conservative</span>
+                    <span className="text-sm font-bold" style={{ color: '#6b7ba3' }}>70%</span>
+                    <span className="text-sm" style={{ color: '#6b7280' }}>Creative</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    defaultValue="70"
+                    className="w-full"
+                    style={{ accentColor: '#6b7ba3' }}
+                  />
+                  <div className="flex justify-between mt-2">
+                    <span className="text-xs" style={{ color: '#9ca3af' }}>Conservative</span>
+                    <span className="text-xs" style={{ color: '#9ca3af' }}>Balanced</span>
+                    <span className="text-xs" style={{ color: '#9ca3af' }}>Creative</span>
                   </div>
                 </div>
               </div>
@@ -183,23 +234,28 @@ export default function Settings({ onNavigate }: SettingsProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all"
+              className="bg-white p-8 rounded-xl"
+              style={{
+                border: '1px solid #e5e7eb',
+                boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
+              }}
             >
-              <h2 className="text-xl font-bold mb-6 text-foreground">Appearance</h2>
+              <h2 className="text-xl font-bold mb-6" style={{ color: '#1a1a1a' }}>Appearance</h2>
               <div>
-                <label className="block text-sm font-medium mb-3 text-foreground">
+                <label className="block text-sm font-medium mb-3" style={{ color: '#6b7280' }}>
                   Theme
                 </label>
                 <div className="flex items-center gap-4">
                   <button
-                    className="flex-1 py-4 rounded-xl border-2 font-medium transition border-primary bg-primary text-primary-foreground"
+                    className="flex-1 py-4 rounded-xl font-medium transition text-white"
+                    style={{
+                      backgroundColor: '#6b7ba3',
+                      border: '2px solid #6b7ba3'
+                    }}
                   >
                     Light Mode
                   </button>
                 </div>
-                <p className="text-xs mt-2 text-muted-foreground">
-                  Light mode only - optimized for the best user experience
-                </p>
               </div>
             </motion.div>
 

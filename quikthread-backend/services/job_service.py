@@ -39,7 +39,8 @@ class JobService:
                 'fileUrl': request_data.get('fileUrl'),
                 'contentUrl': request_data.get('contentUrl'),
                 'duration': None,
-                'threads': None,
+                'posts': None,  # New format-based field
+                'threads': None,  # Legacy field
                 'error': None,
                 'createdAt': datetime.utcnow(),
                 'completedAt': None
@@ -87,21 +88,22 @@ class JobService:
             logger.error(f"Error updating job progress: {str(e)}")
             raise
     
-    async def complete_job(self, job_id: str, threads: List[Dict], duration: Optional[float] = None) -> None:
+    async def complete_job(self, job_id: str, posts: Dict[str, List[str]], duration: Optional[float] = None) -> None:
         """
         Mark job as completed and save results
         
         Args:
             job_id: Job ID to complete
-            threads: Generated thread options
+            posts: Generated posts by format (dict with format keys: one_liner, hot_take, etc.)
             duration: Audio/video duration in seconds
         """
         try:
-            # Update job document
+            # Update job document with new format-based structure
             self.jobs_collection.document(job_id).update({
                 'status': 'completed',
                 'progress': 100,
-                'threads': threads,
+                'posts': posts,  # New format-based structure
+                'threads': None,  # Legacy field set to None
                 'duration': duration,
                 'completedAt': datetime.utcnow()
             })
@@ -116,7 +118,9 @@ class JobService:
                 if user_id:
                     await self.increment_user_credits(user_id)
             
-            logger.info(f"Completed job {job_id} with {len(threads)} threads")
+            # Count total posts across all formats
+            total_posts = sum(len(format_posts) for format_posts in posts.values())
+            logger.info(f"Completed job {job_id} with {total_posts} posts across {len(posts)} formats")
             
         except Exception as e:
             log_error(e, {

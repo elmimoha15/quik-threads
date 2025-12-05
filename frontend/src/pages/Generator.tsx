@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { AlertCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
 import Sidebar from '../components/Sidebar';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../lib/apiService';
@@ -10,13 +10,14 @@ import TopicStep from '../components/generator/TopicStep';
 import ContentSourceStep from '../components/generator/ContentSourceStep';
 import CustomizeStep from '../components/generator/CustomizeStep';
 import { validateUrl, normalizeUrl, getPlatformDisplayName } from '../utils/urlValidator';
+import { addThreadToList } from '../utils/threadUtils';
 
 interface GeneratorProps {
   onNavigate: (page: string) => void;
 }
 
 export default function Generator({ onNavigate }: GeneratorProps) {
-  const { userProfile } = useAuth();
+  const { userProfile, usageData, refreshUsageData } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [topic, setTopic] = useState('');
   const [contentSource, setContentSource] = useState<'file' | 'url' | null>(null);
@@ -25,26 +26,6 @@ export default function Generator({ onNavigate }: GeneratorProps) {
   const [aiInstructions, setAiInstructions] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [usage, setUsage] = useState<any>(null);
-  const [loadingUsage, setLoadingUsage] = useState(false);
-
-  useEffect(() => {
-    const fetchUsage = async () => {
-      if (!userProfile) return;
-
-      setLoadingUsage(true);
-      try {
-        const usageData = await apiService.getUsage();
-        setUsage(usageData);
-      } catch (error) {
-        console.error('Error fetching usage:', error);
-      } finally {
-        setLoadingUsage(false);
-      }
-    };
-
-    fetchUsage();
-  }, [userProfile]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -80,9 +61,9 @@ export default function Generator({ onNavigate }: GeneratorProps) {
     }
 
     // Check if user has credits
-    const maxCredits = usage?.maxCredits || 0;
-    const creditsUsed = usage?.creditsUsed || 0;
-    const remaining = usage?.remaining !== undefined ? usage.remaining : Math.max(0, maxCredits - creditsUsed);
+    const maxCredits = usageData?.maxCredits || 0;
+    const creditsUsed = usageData?.creditsUsed || 0;
+    const remaining = usageData?.remaining !== undefined ? usageData.remaining : Math.max(0, maxCredits - creditsUsed);
     
     if (remaining <= 0) {
       setError('You have reached your monthly credit limit. Please upgrade your plan.');
@@ -144,7 +125,33 @@ export default function Generator({ onNavigate }: GeneratorProps) {
         
         localStorage.setItem('currentJob', JSON.stringify(jobData));
         
-        // Navigate to processing page
+        // Add to threads list immediately with "processing" status (prevents duplicates)
+        const newThread = {
+          id: result.jobId,
+          topic: topic || file?.name || 'Content Generation',
+          title: topic || file?.name || 'Content Generation',
+          status: 'processing',
+          createdAt: new Date().toISOString(),
+          tweets: 0,
+          preview: aiInstructions || 'Generating...',
+          progress: 0
+        };
+        
+        // This will only add if it doesn't already exist
+        const wasAdded = addThreadToList(newThread);
+        
+        // Only show toast if thread was newly added
+        if (wasAdded) {
+          toast.success('Thread generation started! You can navigate to other pages while it processes.', {
+            duration: 4000,
+            icon: '✨',
+          });
+        }
+        
+        // Refresh usage data after successful job creation
+        refreshUsageData();
+
+        // Navigate to processing page immediately
         onNavigate('processing');
       }
     } catch (error: any) {
@@ -162,7 +169,7 @@ export default function Generator({ onNavigate }: GeneratorProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: '#f5f5f5' }}>
       <Sidebar currentPage="dashboard" onNavigate={onNavigate} />
 
       <div className="ml-64 p-8">
@@ -173,11 +180,11 @@ export default function Generator({ onNavigate }: GeneratorProps) {
           >
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h1 className="text-4xl font-bold mb-4 text-foreground">Generate X Posts</h1>
-                <p className="text-xl text-muted-foreground mb-6">
+                <h1 className="text-4xl font-bold mb-4" style={{ color: '#1a1a1a' }}>Generate X Posts</h1>
+                <p className="text-xl mb-6" style={{ color: '#6b7280' }}>
                   Transform your content into engaging X posts in minutes
                 </p>
-                <CreditsDisplay usage={usage} onNavigate={onNavigate} />
+                <CreditsDisplay usage={usageData} onNavigate={onNavigate} />
               </div>
 
               <StepIndicator currentStep={currentStep} />
@@ -187,9 +194,13 @@ export default function Generator({ onNavigate }: GeneratorProps) {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-6 p-4 rounded-xl border border-red-200 bg-red-50"
+                  className="mb-6 p-4 rounded-xl"
+                  style={{
+                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)'
+                  }}
                 >
-                  <p className="text-red-600 font-medium">{error}</p>
+                  <p className="font-medium" style={{ color: '#ef4444' }}>{error}</p>
                 </motion.div>
               )}
 
@@ -223,7 +234,7 @@ export default function Generator({ onNavigate }: GeneratorProps) {
                   aiInstructions={aiInstructions}
                   setAiInstructions={setAiInstructions}
                   isGenerating={isGenerating}
-                  usage={usage}
+                  usage={usageData}
                   handleGenerate={handleGenerate}
                   setCurrentStep={setCurrentStep}
                 />

@@ -15,17 +15,17 @@ export default function TopicStep({ topic, setTopic, setCurrentStep }: TopicStep
       exit={{ opacity: 0, x: 20 }}
       className="space-y-6"
     >
-      <div className="bg-white p-8 rounded-2xl border border-slate-100" style={{
-        boxShadow: 'var(--card-shadow)',
-        borderColor: 'var(--card-border)'
+      <div className="p-8 rounded-2xl bg-white" style={{
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
       }}>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--gradient-primary)' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#6b7ba3' }}>
             <FileText className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Topic or Idea</h3>
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>What would you like to create X posts about?</p>
+            <h3 className="text-xl font-bold" style={{ color: '#1a1a1a' }}>Topic or Idea</h3>
+            <p className="text-base" style={{ color: '#6b7280' }}>What would you like to create X posts about?</p>
           </div>
         </div>
 
@@ -33,10 +33,10 @@ export default function TopicStep({ topic, setTopic, setCurrentStep }: TopicStep
           <textarea
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            className="modern-input min-h-[120px] text-lg py-4 resize-none"
+            className="modern-input min-h-[120px] text-base py-4 resize-none"
             placeholder="e.g., 'How to build a successful SaaS product' or 'The future of AI in marketing' or 'My experience launching a startup'"
           />
-          <div className="absolute bottom-4 right-4 text-sm" style={{ color: 'var(--text-muted)' }}>
+          <div className="absolute bottom-4 right-4 text-sm" style={{ color: '#9ca3af' }}>
             {topic.length}/500
           </div>
         </div>
@@ -52,11 +52,11 @@ export default function TopicStep({ topic, setTopic, setCurrentStep }: TopicStep
             <button
               key={suggestion}
               onClick={() => setTopic(suggestion)}
-              className="px-3 py-1.5 text-sm rounded-lg border transition-all hover:scale-105"
+              className="px-3 py-1.5 text-sm rounded-lg transition-all hover:scale-105 hover:bg-opacity-80"
               style={{
-                borderColor: 'var(--card-border)',
-                backgroundColor: 'var(--background-secondary)',
-                color: 'var(--text-secondary)'
+                border: '1px solid #e5e7eb',
+                backgroundColor: '#f9fafb',
+                color: '#1a1a1a'
               }}
             >
               + {suggestion}
@@ -70,14 +70,11 @@ export default function TopicStep({ topic, setTopic, setCurrentStep }: TopicStep
           disabled={!topic.trim()}
           whileHover={topic.trim() ? { scale: 1.02, y: -2 } : {}}
           whileTap={topic.trim() ? { scale: 0.98 } : {}}
-          className={`w-full py-5 rounded-xl font-bold text-xl transition-all flex items-center justify-center gap-4 mt-6 ${
-            topic.trim()
-              ? 'text-white cursor-pointer'
-              : 'cursor-not-allowed text-white'
-          }`}
+          className="w-full py-5 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-4 mt-6 text-white"
           style={{
-            background: topic.trim() ? 'var(--gradient-primary)' : 'var(--text-muted)',
-            boxShadow: topic.trim() ? 'var(--shadow-lg)' : 'none'
+            backgroundColor: topic.trim() ? '#6b7ba3' : '#d1d5db',
+            boxShadow: topic.trim() ? '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' : 'none',
+            cursor: topic.trim() ? 'pointer' : 'not-allowed'
           }}
         >
           Continue to Content Source

@@ -1,9 +1,7 @@
-import { useState, useEffect } from 'react';
 import { Home, FileText, BarChart3, Settings, CreditCard, LogOut, Upload, User, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { usePlanAccess } from '../hooks/usePlanAccess';
-import { apiService } from '../lib/apiService';
 
 interface SidebarProps {
   currentPage: string;
@@ -20,35 +18,8 @@ const menuItems = [
 ];
 
 export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, usageData } = useAuth();
   const { canAccessAnalytics, getCurrentPlan } = usePlanAccess();
-  const [usage, setUsage] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchUsage = async () => {
-      if (!currentUser) return;
-      
-      setLoading(true);
-      try {
-        const usageData = await apiService.getUsage();
-        setUsage(usageData);
-      } catch (error) {
-        console.error('Error fetching usage:', error);
-        // Fallback to mock data if API fails
-        setUsage({
-          creditsUsed: 0,
-          maxCredits: 2,
-          remaining: 2,
-          tier: 'free'
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsage();
-  }, [currentUser]);
 
   const handleLogout = async () => {
     try {
@@ -132,7 +103,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
         {/* Plan and Usage Info */}
         <div className="space-y-3">
           {/* Credits Usage */}
-          {usage && (
+          {usageData && (
             <div className="p-3 rounded-xl text-white" style={{ backgroundColor: '#1E1C1C', border: '1px solid #374151' }}>
               <div className="flex items-center gap-2 mb-2">
                 <Zap className="w-4 h-4 text-yellow-400" />
@@ -141,20 +112,20 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs opacity-80">Used this month</span>
                 <span className="text-xs font-medium">
-                  {usage.creditsUsed || 0} / {usage.maxCredits || 0}
+                  {usageData.creditsUsed || 0} / {usageData.maxCredits || 0}
                 </span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
                 <div 
                   className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all"
                   style={{ 
-                    width: `${Math.min(((usage.creditsUsed || 0) / (usage.maxCredits || 1)) * 100, 100)}%` 
+                    width: `${Math.min(((usageData.creditsUsed || 0) / (usageData.maxCredits || 1)) * 100, 100)}%` 
                   }}
                 />
               </div>
-              {usage.remaining !== undefined && (
+              {usageData.remaining !== undefined && (
                 <p className="text-xs text-green-400">
-                  {usage.remaining} credits remaining
+                  {usageData.remaining} credits remaining
                 </p>
               )}
             </div>

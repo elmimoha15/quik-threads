@@ -58,38 +58,39 @@ const invoices = [
 
 export default function Billing({ onNavigate }: BillingProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: '#f5f5f5' }}>
       <Sidebar currentPage="billing" onNavigate={onNavigate} />
 
       <div className="ml-64 p-8">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl font-bold mb-8 text-foreground">Billing & Plans</h1>
+          <h1 className="text-4xl font-bold mb-8" style={{ color: '#1a1a1a' }}>Billing & Plans</h1>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all relative"
+            className="bg-white rounded-xl p-8 mb-8"
+            style={{
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
+            }}
           >
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold mb-6 text-foreground">Current Plan</h2>
-                <p className="text-muted-foreground mb-4">Perfect for getting started</p>
-                <p className="text-muted-foreground">You're on the free plan with 5 threads per month</p>
+                <h2 className="text-xl font-bold mb-2" style={{ color: '#1a1a1a' }}>Current Plan: Free</h2>
+                <p style={{ color: '#6b7280' }}>You're on the free plan with 5 threads per month</p>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="text-right">
-                  <p className="text-3xl font-bold text-primary">5 / 5</p>
-                  <p className="text-sm text-muted-foreground">threads remaining</p>
-                </div>
+              <div className="text-right">
+                <p className="text-3xl font-bold mb-1" style={{ color: '#6b7ba3' }}>5 / 5</p>
+                <p className="text-sm" style={{ color: '#6b7280' }}>threads remaining</p>
               </div>
             </div>
-            <div className="mt-4 w-full bg-muted rounded-full h-3">
-              <div className="bg-primary h-3 rounded-full" style={{ width: '100%' }} />
+            <div className="mt-4 w-full rounded-full h-3" style={{ backgroundColor: '#e5e7eb' }}>
+              <div className="h-3 rounded-full" style={{ width: '100%', backgroundColor: '#6b7ba3' }} />
             </div>
           </motion.div>
 
           <div className="mb-12">
-            <h2 className="text-xl font-bold mb-6 text-foreground">Available Plans</h2>
+            <h2 className="text-xl font-bold mb-6" style={{ color: '#1a1a1a' }}>Upgrade Your Plan</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {plans.map((plan, index) => (
                 <motion.div
@@ -97,35 +98,49 @@ export default function Billing({ onNavigate }: BillingProps) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className={`bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all ${plan.popular ? 'ring-2 ring-primary shadow-xl' : ''} relative`}
+                  className={`bg-white rounded-xl p-8 relative`}
+                  style={{
+                    border: plan.popular ? '2px solid #6b7ba3' : '1px solid #e5e7eb',
+                    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
+                  }}
                 >
                   {plan.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-sm font-medium text-white"
+                      style={{ backgroundColor: '#6b7ba3' }}
+                    >
                       Most Popular
                     </div>
                   )}
                   {plan.current && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-secondary text-secondary-foreground px-4 py-1 rounded-full text-sm font-medium">
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-sm font-medium"
+                      style={{ backgroundColor: '#1a1a1a', color: 'white' }}
+                    >
                       Current Plan
                     </div>
                   )}
-                  <h3 className="text-2xl font-bold text-foreground">{plan.name}</h3>
-                  <p className="text-sm mb-4 text-muted-foreground">{plan.subtitle}</p>
+                  <h3 className="text-2xl font-bold" style={{ color: '#1a1a1a' }}>{plan.name}</h3>
+                  <p className="text-sm mb-4" style={{ color: '#6b7280' }}>{plan.subtitle}</p>
                   <div className="mb-6">
-                    <span className="text-4xl font-bold text-foreground">{plan.price}</span>
-                    <span className="text-sm text-muted-foreground">/{plan.period}</span>
+                    <span className="text-4xl font-bold" style={{ color: '#1a1a1a' }}>{plan.price}</span>
+                    <span className="text-sm" style={{ color: '#6b7280' }}>/{plan.period}</span>
                   </div>
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-foreground">{feature}</span>
+                        <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#10b981' }} />
+                        <span style={{ color: '#1a1a1a' }}>{feature}</span>
                       </li>
                     ))}
                   </ul>
                   <button
                     disabled={plan.current}
-                    className={`w-full py-3 px-6 rounded-xl font-medium transition ${plan.popular ? 'bg-primary text-primary-foreground hover:bg-primary/90' : plan.current ? 'bg-muted text-muted-foreground cursor-not-allowed' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'}`}
+                    className="w-full py-3 px-6 rounded-xl font-medium transition text-white"
+                    style={{
+                      backgroundColor: plan.current ? '#e5e7eb' : (plan.popular ? '#6b7ba3' : 'transparent'),
+                      color: plan.current ? '#9ca3af' : (plan.popular ? 'white' : '#6b7ba3'),
+                      border: plan.popular || plan.current ? 'none' : '2px solid #6b7ba3',
+                      cursor: plan.current ? 'not-allowed' : 'pointer'
+                    }}
                   >
                     {plan.current ? 'Current Plan' : 'Upgrade Now'}
                   </button>
@@ -176,9 +191,14 @@ export default function Billing({ onNavigate }: BillingProps) {
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${
                         invoice.status === 'Paid'
-                          ? 'bg-green-100 text-green-700 border border-green-200'
-                          : 'bg-yellow-100 text-yellow-700 border border-yellow-200'
+                          ? 'text-green-400 border border-green-500/30'
+                          : 'text-yellow-400 border border-yellow-500/30'
                       }`}
+                      style={{
+                        backgroundColor: invoice.status === 'Paid'
+                          ? 'rgba(16, 185, 129, 0.1)'
+                          : 'rgba(245, 158, 11, 0.1)'
+                      }}
                     >
                       {invoice.status}
                     </span>

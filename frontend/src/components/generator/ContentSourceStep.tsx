@@ -34,32 +34,32 @@ export default function ContentSourceStep({
       className="space-y-6"
     >
       {/* Topic Input */}
-      <div className="bg-white p-8 rounded-2xl border border-slate-100" style={{
-        boxShadow: 'var(--card-shadow)',
-        borderColor: 'var(--card-border)'
+      <div className="p-8 rounded-2xl bg-white" style={{
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
       }}>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--gradient-primary)' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#6b7ba3' }}>
             <FileText className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Content Source</h3>
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Select a content source</p>
+            <h3 className="text-xl font-bold" style={{ color: '#1a1a1a' }}>Content Source</h3>
+            <p className="text-base" style={{ color: '#6b7280' }}>Select a content source</p>
           </div>
         </div>
 
         {/* Content Source - URL and File Upload Combined */}
-        <div className="bg-white p-8 rounded-2xl border border-slate-100" style={{
-          boxShadow: 'var(--card-shadow)',
-          borderColor: 'var(--card-border)'
+        <div className="p-8 rounded-2xl bg-white" style={{
+          border: '1px solid #e5e7eb',
+          boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
         }}>
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--primary-100)' }}>
-              <Link className="w-6 h-6" style={{ color: 'var(--primary)' }} />
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#dbeafe' }}>
+              <Link className="w-6 h-6" style={{ color: '#3b82f6' }} />
             </div>
             <div>
-              <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Content Source (Optional)</h3>
-              <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Add a URL or file to enhance your topic</p>
+              <h3 className="text-lg font-bold" style={{ color: '#1a1a1a' }}>Content Source (Optional)</h3>
+              <p className="text-sm" style={{ color: '#6b7280' }}>Add a URL or file to enhance your topic</p>
             </div>
           </div>
 
@@ -79,8 +79,8 @@ export default function ContentSourceStep({
                     setContentSource(null);
                   }
                 }}
-                className="modern-input pl-14 text-lg py-4"
-                placeholder="      Paste your YouTube, TikTok, Spotify, or podcast link here..."
+                className="modern-input pl-14 text-base py-4"
+                placeholder="Paste your YouTube, TikTok, Spotify, or podcast link here..."
               />
             </div>
             
@@ -112,28 +112,28 @@ export default function ContentSourceStep({
 
           {/* Divider */}
           <div className="flex items-center gap-6 my-6">
-            <div className="flex-1 h-px" style={{ backgroundColor: 'var(--card-border)' }}></div>
-            <span className="text-lg font-medium" style={{ color: 'var(--text-muted)' }}>OR</span>
-            <div className="flex-1 h-px" style={{ backgroundColor: 'var(--card-border)' }}></div>
+            <div className="flex-1 h-px" style={{ backgroundColor: '#e5e7eb' }}></div>
+            <span className="text-base font-medium" style={{ color: '#6b7280' }}>OR</span>
+            <div className="flex-1 h-px" style={{ backgroundColor: '#e5e7eb' }}></div>
           </div>
 
           {/* File Upload */}
           {file ? (
             <div className="border-2 rounded-2xl p-8 text-center" style={{
-              borderColor: 'var(--success)',
-              backgroundColor: 'var(--success-light)'
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)'
             }}>
               <div className="flex items-center justify-center gap-4 mb-4">
-                <CheckCircle className="w-10 h-10" style={{ color: 'var(--success)' }} />
+                <CheckCircle className="w-10 h-10" style={{ color: '#10b981' }} />
                 <div className="text-left">
-                  <p className="font-semibold text-lg" style={{ color: 'var(--text-primary)' }}>{file.name}</p>
-                  <p className="text-lg" style={{ color: 'var(--success)' }}>File uploaded successfully</p>
+                  <p className="font-semibold text-base" style={{ color: '#1a1a1a' }}>{file.name}</p>
+                  <p className="text-sm" style={{ color: '#10b981' }}>File uploaded successfully</p>
                 </div>
               </div>
               <button
                 onClick={removeFile}
-                className="mt-3 text-lg font-medium transition flex items-center gap-2 mx-auto hover:underline"
-                style={{ color: 'var(--text-muted)' }}
+                className="mt-3 text-sm font-medium transition flex items-center gap-2 mx-auto hover:underline"
+                style={{ color: '#6b7280' }}
               >
                 <AlertCircle className="w-5 h-5" />
                 Remove file
@@ -144,10 +144,10 @@ export default function ContentSourceStep({
               onDragOver={(e) => e.preventDefault()}
               onDragEnter={(e) => e.preventDefault()}
               onDrop={(e) => handleFileDrop(e as any)}
-              className="block border-2 border-dashed rounded-2xl p-10 text-center transition cursor-pointer"
+              className="block border-2 border-dashed rounded-2xl p-10 text-center transition cursor-pointer hover:border-blue-400"
               style={{
-                borderColor: 'var(--card-border)',
-                backgroundColor: 'var(--background-secondary)'
+                borderColor: '#e5e7eb',
+                backgroundColor: '#f9fafb'
               }}
             >
               <input
@@ -159,9 +159,9 @@ export default function ContentSourceStep({
                 accept="audio/*,video/*"
                 className="hidden"
               />
-              <Upload className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
-              <p className="text-lg font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Drop files here or click to browse</p>
-              <p className="text-lg" style={{ color: 'var(--text-muted)' }}>MP3, MP4, MOV up to 500MB</p>
+              <Upload className="w-12 h-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
+              <p className="text-base font-medium mb-2" style={{ color: '#1a1a1a' }}>Drop files here or click to browse</p>
+              <p className="text-sm" style={{ color: '#6b7280' }}>MP3, MP4, MOV up to 500MB</p>
             </label>
           )}
         </div>
@@ -171,7 +171,11 @@ export default function ContentSourceStep({
           onClick={() => setCurrentStep(3)}
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
-          className="w-full flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg transition bg-primary hover:bg-primary/90 text-primary-foreground"
+          className="w-full flex items-center justify-center gap-3 px-8 py-5 rounded-xl font-bold text-base transition text-white"
+          style={{
+            backgroundColor: '#6b7ba3',
+            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+          }}
         >
           Continue to Customization
           <ArrowRight className="w-6 h-6" />

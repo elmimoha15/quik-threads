@@ -1,64 +1,91 @@
-/* QuikThread Light Mode Theme Variables - Based on Landing Page Design */
+/* QuikThread Theme Variables - Based on Screenshots */
 :root {
-  /* Background Colors - Light Mode */
-  --background: #ffffff; /* Pure white background */
-  --background-secondary: #f8fafc; /* Very light gray for sections */
-  --background-tertiary: #f1f5f9; /* Slightly darker for inputs/cards */
+  /* Background Colors */
+  --background: #1a1a1a; /* Very dark sidebar background */
+  --background-secondary: #f5f5f5; /* Light gray main content background */
+  --background-tertiary: #ffffff; /* White cards */
   
-  /* Text Colors - Light Mode */
-  --text-primary: #1E1C1C; /* Dark charcoal for primary text */
-  --text-secondary: #1E1C1C; /* Dark charcoal for secondary text */
-  --text-muted: #6b7280; /* Gray for muted text */
-  --text-light: #9ca3af; /* Light gray for placeholders */
+  /* Text Colors */
+  --text-primary: #1a1a1a; /* Dark text for headings */
+  --text-secondary: #6b7280; /* Medium gray for secondary text */
+  --text-muted: #9ca3af; /* Light gray for muted text */
+  --text-light: #d1d5db; /* Very light gray for placeholders */
   
-  /* Primary Brand Colors - SaaS Blue */
-  --primary: #516289; /* Main brand color */
-  --primary-hover: #3d4a63; /* Darker on hover */
-  --primary-light: #6b7ba3; /* Lighter variant */
-  --primary-dark: #2a3441; /* Dark variant */
+  /* Primary Brand Colors - Blue/Purple Button */
+  --primary: #6b7ba3; /* Slate blue for buttons */
+  --primary-hover: #596c96; /* Slightly darker on hover */
+  --primary-light: #8a96b8; /* Lighter variant */
+  --primary-dark: #4a5b7d; /* Dark variant */
   --primary-50: #f0f2f6; /* Very light blue */
-  --primary-100: #e1e6ed; /* Light blue */
+  --primary-100: #e1e6ed; /* Light blue background */
   
   /* Secondary Colors */
-  --secondary: #1E1C1C; /* Dark charcoal */
-  --secondary-hover: #000000; /* Pure black on hover */
-  --secondary-light: #4b5563; /* Medium gray */
+  --secondary: #e5e7eb; /* Light gray for borders and dividers */
+  --secondary-hover: #d1d5db; /* Slightly darker on hover */
+  --secondary-light: #f3f4f6; /* Very light gray */
   
-  /* Card Colors - Light Mode */
+  /* Card Colors */
   --card-bg: #ffffff; /* White cards */
   --card-border: #e5e7eb; /* Light gray border */
-  --card-hover: #f9fafb; /* Subtle hover */
+  --card-hover: #f9fafb; /* Slightly gray on hover */
   --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --card-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   
   /* Status Colors */
-  --success: #059669; /* Emerald-600 */
-  --success-light: #d1fae5; /* Emerald-100 */
-  --warning: #d97706; /* Amber-600 */
-  --warning-light: #fef3c7; /* Amber-100 */
-  --error: #dc2626; /* Red-600 */
-  --error-light: #fee2e2; /* Red-100 */
-  --info: #0284c7; /* Sky-600 */
-  --info-light: #e0f2fe; /* Sky-100 */
+  --success: #10b981; /* Green for success */
+  --success-light: #d1fae5; /* Light green background */
+  --warning: #f59e0b; /* Amber for warning */
+  --warning-light: #fef3c7; /* Light amber background */
+  --error: #ef4444; /* Red for errors */
+  --error-light: #fee2e2; /* Light red background */
+  --info: #3b82f6; /* Blue for info */
+  --info-light: #dbeafe; /* Light blue background */
   
-  /* Gradient Backgrounds - SaaS Theme */
-  --gradient-primary: linear-gradient(135deg, #516289 0%, #6b7ba3 100%);
-  --gradient-secondary: linear-gradient(135deg, #516289 0%, #1E1C1C 100%);
-  --gradient-hero: linear-gradient(135deg, #516289 0%, #3d4a63 100%);
-  --gradient-subtle: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+  /* Icon Background Colors */
+  --icon-blue-bg: #dbeafe; /* Light blue for icons */
+  --icon-green-bg: #d1fae5; /* Light green for icons */
+  --icon-purple-bg: #e9d5ff; /* Light purple for icons */
   
-  /* Glass Morphism - Light Mode */
-  --glass-bg: rgba(255, 255, 255, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.9);
-  --glass-backdrop: blur(12px);
+  /* Gradient Backgrounds */
+  --gradient-primary: linear-gradient(135deg, #6b7ba3 0%, #596c96 100%);
+  --gradient-secondary: linear-gradient(135deg, #f5f5f5 0%, #e5e7eb 100%);
   
-  /* Shadows - Light Mode */
+  /* Shadows */
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  
+  /* Status Colors */
+  --success: #10b981; /* Emerald-500 - brighter for dark mode */
+  --success-light: #065f46; /* Emerald-800 dark */
+  --warning: #f59e0b; /* Amber-500 - matches screenshots */
+  --warning-light: #78350f; /* Amber-900 dark */
+  --error: #ef4444; /* Red-500 - brighter */
+  --error-light: #7f1d1d; /* Red-900 dark */
+  --info: #3b82f6; /* Blue-500 - brighter */
+  --info-light: #1e3a8a; /* Blue-900 dark */
+  
+  /* Gradient Backgrounds - SaaS Theme */
+  --gradient-primary: linear-gradient(135deg, #596c96 0%, #6b7ba3 100%);
+  --gradient-secondary: linear-gradient(135deg, #596c96 0%, #2d3446 100%);
+  --gradient-hero: linear-gradient(135deg, #596c96 0%, #3d4a63 100%);
+  --gradient-subtle: linear-gradient(135deg, #2d3446 0%, #374151 100%);
+  
+  /* Glass Morphism - Dark Mode */
+  --glass-bg: rgba(45, 52, 70, 0.8);
+  --glass-border: rgba(55, 65, 81, 0.5);
+  --glass-backdrop: blur(12px);
+  
+  /* Shadows - Dark Mode */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.2);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.2);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.4);
   
   /* Border Radius - Modern, Consistent */
   --radius-xs: 0.25rem;

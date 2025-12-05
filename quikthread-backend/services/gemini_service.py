@@ -13,54 +13,125 @@ class GeminiService:
         genai.configure(api_key=settings.gemini_api_key)
         self.model = genai.GenerativeModel("gemini-2.0-flash-exp")
     
-    async def generate_threads(self, transcript: str) -> Dict[str, Any]:
+    async def generate_threads(self, transcript: str, ai_instructions: str = None) -> Dict[str, Any]:
         """
-        Generate 5 viral X thread options from transcript using Gemini
+        Generate 6 X post formats from transcript using Gemini
         
         Args:
-            transcript: The transcribed text to convert into threads
+            transcript: The transcribed text to convert into X posts
+            ai_instructions: Optional user instructions for customization (e.g., "drive traffic to my YouTube")
             
         Returns:
-            Dict with threads array, success status, and optional error
+            Dict with posts array organized by format, success status, and optional error
         """
         try:
-            # Create the prompt for viral X threads
+            # Build the user guidance section
+            user_guidance = ""
+            if ai_instructions and ai_instructions.strip():
+                user_guidance = f"""
+IMPORTANT - User's Custom Instructions:
+{ai_instructions}
+
+Make sure to incorporate these instructions into ALL posts across all formats.
+"""
+
+            # Create the prompt for X posts by format
             prompt = f"""
-You are an expert social media content creator specializing in viral X (Twitter) threads. 
+You are an expert social media content creator specializing in viral X (Twitter) posts.
 
-Convert the following transcript into 5 different viral X thread options. Each thread should:
+Convert the following transcript into 6 DIFFERENT POST FORMATS. For each format, create 3-4 variations.
 
-1. Have 5-8 tweets total
-2. Start with an attention-grabbing hook (question, bold claim, or compelling story)
-3. Each tweet must be 270 characters or less
-4. Use emojis strategically and line breaks for readability
-5. End with a strong call-to-action
-6. Be engaging, shareable, and provide value
+{user_guidance}
 
-Return ONLY a JSON array in this exact format:
-[
-  {{
-    "threadNumber": 1,
-    "hook": "Brief description of the hook strategy",
-    "tweets": ["Tweet 1 text here", "Tweet 2 text here", "Tweet 3 text here", "Tweet 4 text here", "Tweet 5 text here"]
-  }},
-  {{
-    "threadNumber": 2,
-    "hook": "Brief description of the hook strategy", 
-    "tweets": ["Tweet 1 text here", "Tweet 2 text here", "Tweet 3 text here", "Tweet 4 text here", "Tweet 5 text here"]
-  }}
-]
+The 6 formats are:
+
+1. **One-Liner** (3-4 variations)
+   - Single punchy sentence
+   - 100-150 characters
+   - Direct and memorable
+   - Example: "The best investment? Yourself. No stock can beat that ROI. 📈"
+
+2. **Hot Take** (3-4 variations)
+   - Bold, controversial opinion
+   - 150-200 characters
+   - Makes people think or debate
+   - Example: "Unpopular opinion: Most productivity advice makes you LESS productive. Here's why... 🧵"
+
+3. **Paragraph Post** (3-4 variations)
+   - 3-5 sentences
+   - 250-270 characters max
+   - Well-structured narrative
+   - Breaks and emojis for readability
+   - Example: "I spent 5 years chasing followers.\n\nThen I realized:\n\nEngagement > Follower count\nValue > Virality\nCommunity > Clout\n\nEverything changed. 🔄"
+
+4. **Mini-Story** (3-4 variations)
+   - Short narrative arc (beginning, middle, end)
+   - 200-270 characters
+   - Personal or relatable
+   - Emotional hook
+   - Example: "2019: Fired from my job\n2020: Started freelancing\n2021: First $10k month\n2022: Hired my first employee\n2023: 7-figure business\n\nNever waste a crisis. 💪"
+
+5. **Insight** (3-4 variations)
+   - Key learning or wisdom
+   - 150-220 characters  
+   - Actionable takeaway
+   - Example: "The difference between amateurs and pros?\n\nAmateurs wait for inspiration.\nPros work on a schedule.\n\nTalent is overrated. Consistency wins. ⏰"
+
+6. **List Post** (3-4 variations)
+   - 3-5 bullet points or numbered items
+   - 200-270 characters
+   - Easy to scan
+   - Example: "3 rules I live by:\n\n1. Assume nothing\n2. Question everything\n3. Build relentlessly\n\nSimple, but not easy. 🎯"
+
+Return ONLY a JSON object in this exact format:
+{{
+  "one_liner": [
+    {{"text": "Post text here", "format": "one_liner"}},
+    {{"text": "Another variation", "format": "one_liner"}},
+    {{"text": "Third variation", "format": "one_liner"}}
+  ],
+  "hot_take": [
+    {{"text": "Hot take text", "format": "hot_take"}},
+    {{"text": "Another hot take", "format": "hot_take"}},
+    {{"text": "Third hot take", "format": "hot_take"}}
+  ],
+  "paragraph": [
+    {{"text": "Paragraph post text", "format": "paragraph"}},
+    {{"text": "Another paragraph", "format": "paragraph"}},
+    {{"text": "Third paragraph", "format": "paragraph"}}
+  ],
+  "mini_story": [
+    {{"text": "Story text", "format": "mini_story"}},
+    {{"text": "Another story", "format": "mini_story"}},
+    {{"text": "Third story", "format": "mini_story"}}
+  ],
+  "insight": [
+    {{"text": "Insight text", "format": "insight"}},
+    {{"text": "Another insight", "format": "insight"}},
+    {{"text": "Third insight", "format": "insight"}}
+  ],
+  "list_post": [
+    {{"text": "List text", "format": "list_post"}},
+    {{"text": "Another list", "format": "list_post"}},
+    {{"text": "Third list", "format": "list_post"}}
+  ]
+}}
 
 Transcript to convert:
 {transcript}
 
-Remember: Return ONLY the JSON array, no other text or markdown formatting.
+Remember: 
+- Return ONLY the JSON object, no other text or markdown
+- Each post must be 280 characters or less
+- Use emojis strategically
+- Create 3-4 variations per format
+- Make each variation unique and valuable
 """
 
             # Configure generation settings
             generation_config = genai.types.GenerationConfig(
                 temperature=0.8,
-                max_output_tokens=2000,
+                max_output_tokens=3000,
             )
             
             # Generate content
@@ -79,50 +150,55 @@ Remember: Return ONLY the JSON array, no other text or markdown formatting.
             
             # Parse JSON response
             try:
-                threads_data = json.loads(response_text)
+                posts_data = json.loads(response_text)
             except json.JSONDecodeError as e:
                 print(f"JSON parsing error: {e}")
                 print(f"Response text: {response_text}")
                 return {
-                    "threads": [],
+                    "posts": {},
                     "success": False,
                     "error": f"Failed to parse JSON response: {str(e)}"
                 }
             
-            # Validate and process threads
-            processed_threads = []
-            for thread in threads_data:
-                if not isinstance(thread, dict):
-                    continue
-                    
-                # Validate required fields
-                if "threadNumber" not in thread or "tweets" not in thread:
-                    continue
-                
-                # Truncate tweets that are too long (280 char limit)
-                validated_tweets = []
-                for tweet in thread.get("tweets", []):
-                    if len(tweet) > 280:
-                        tweet = tweet[:277] + "..."
-                    validated_tweets.append(tweet)
-                
-                processed_thread = {
-                    "threadNumber": thread.get("threadNumber"),
-                    "hook": thread.get("hook", ""),
-                    "tweets": validated_tweets
-                }
-                processed_threads.append(processed_thread)
+            # Validate and process posts by format
+            processed_posts = {
+                "one_liner": [],
+                "hot_take": [],
+                "paragraph": [],
+                "mini_story": [],
+                "insight": [],
+                "list_post": []
+            }
             
-            # Ensure we have exactly 5 threads
-            if len(processed_threads) < 5:
+            for format_key in processed_posts.keys():
+                if format_key in posts_data and isinstance(posts_data[format_key], list):
+                    for post in posts_data[format_key]:
+                        # Handle both dict format {"text": "..."} and plain string
+                        if isinstance(post, dict) and "text" in post:
+                            text = post["text"]
+                        elif isinstance(post, str):
+                            text = post
+                        else:
+                            continue  # Skip invalid format
+                        
+                        # Truncate if too long
+                        if len(text) > 280:
+                            text = text[:277] + "..."
+                        
+                        # Append just the text string
+                        processed_posts[format_key].append(text)
+            
+            # Verify we have posts in each format
+            total_posts = sum(len(posts) for posts in processed_posts.values())
+            if total_posts < 6:
                 return {
-                    "threads": processed_threads,
+                    "posts": processed_posts,
                     "success": False,
-                    "error": f"Generated only {len(processed_threads)} threads, expected 5"
+                    "error": f"Generated only {total_posts} posts total, expected at least 18"
                 }
             
             return {
-                "threads": processed_threads[:5],  # Take first 5 threads
+                "posts": processed_posts,
                 "success": True,
                 "error": None
             }
@@ -131,13 +207,13 @@ Remember: Return ONLY the JSON array, no other text or markdown formatting.
             # Log error with context
             log_error(e, {
                 "service": "gemini",
-                "operation": "generate_threads",
+                "operation": "generate_posts",
                 "transcript_length": len(transcript) if transcript else 0
             })
             
-            print(f"Gemini thread generation error: {e}")
+            print(f"Gemini post generation error: {e}")
             return {
-                "threads": [],
+                "posts": {},
                 "success": False,
                 "error": str(e)
             }

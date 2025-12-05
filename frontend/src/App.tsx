@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { OnboardingFlow } from './components/onboarding/OnboardingFlow';
@@ -93,6 +94,45 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#ffffff',
+              color: '#1a1a1a',
+              borderRadius: '12px',
+              border: '1px solid #e5e7eb',
+              padding: '16px',
+              boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+              fontWeight: '500',
+            },
+            success: {
+              duration: 5000,
+              style: {
+                background: '#ffffff',
+                color: '#1a1a1a',
+                border: '1px solid #10b981',
+              },
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#ffffff',
+              },
+            },
+            error: {
+              duration: 5000,
+              style: {
+                background: '#ffffff',
+                color: '#1a1a1a',
+                border: '1px solid #ef4444',
+              },
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#ffffff',
+              },
+            },
+          }}
+        />
         <AppContent />
       </AuthProvider>
     </ThemeProvider>
