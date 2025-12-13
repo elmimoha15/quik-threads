@@ -159,7 +159,7 @@ export function StorySection() {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="bg-gradient-to-br from-[#516289] to-[#3d4a63] rounded-2xl p-6 text-white text-center hover:scale-105 transition-transform duration-300"
+              className="bg-gradient-to-br from-[#0f1a14] to-[#1a2e23] rounded-2xl p-6 text-white text-center hover:scale-105 transition-transform duration-300"
             >
               <stat.icon className="w-8 h-8 mx-auto mb-3 opacity-80" />
               <div className="text-3xl font-bold mb-1">{stat.value}</div>

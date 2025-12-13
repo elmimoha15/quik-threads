@@ -29,11 +29,11 @@ export function EmailVerificationStep({ onVerified }: EmailVerificationStepProps
   return (
     <div className="text-center">
       <div className="mb-8">
-        <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
           {isVerified ? (
             <CheckCircle className="w-10 h-10 text-green-500" />
           ) : (
-            <Mail className="w-10 h-10 text-blue-600" />
+            <Mail className="w-10 h-10 text-emerald-600" />
           )}
         </div>
         
@@ -73,7 +73,7 @@ export function EmailVerificationStep({ onVerified }: EmailVerificationStepProps
         <button
           onClick={handleVerify}
           disabled={isVerifying}
-          className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-lg font-medium"
+          className="w-full bg-emerald-600 text-white py-4 px-6 rounded-lg hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-lg font-medium"
         >
           {isVerifying ? (
             <>

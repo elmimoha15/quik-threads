@@ -80,7 +80,7 @@ const ConnectionTest: React.FC = () => {
           className={`px-6 py-3 rounded-lg font-semibold ${
             isRunning
               ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
+              : 'bg-emerald-600 hover:bg-emerald-700 text-white'
           }`}
         >
           {isRunning ? 'Running Tests...' : 'Test All Endpoints'}
@@ -124,9 +124,9 @@ const ConnectionTest: React.FC = () => {
         </div>
       )}
 
-      <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-        <h3 className="font-semibold text-blue-800 mb-2">Connection Status:</h3>
-        <div className="text-sm text-blue-700 space-y-1">
+      <div className="mt-8 p-4 bg-emerald-50 rounded-lg">
+        <h3 className="font-semibold text-emerald-800 mb-2">Connection Status:</h3>
+        <div className="text-sm text-emerald-700 space-y-1">
           <p>• Backend Server: <span className="font-mono">http://localhost:8000</span></p>
           <p>• Frontend Server: <span className="font-mono">http://localhost:5173</span></p>
           <p>• Proxy Configuration: <span className="text-green-600">✅ Active</span></p>

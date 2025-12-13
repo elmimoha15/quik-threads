@@ -1,20 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserService } from '../../lib/userService';
 import { CreatorTypeStep } from './CreatorTypeStep';
 import { PlanSelectionStep } from './PlanSelectionStep';
 import { ReferralSourceStep } from './ReferralSourceStep';
 import { EmailVerificationStep } from './EmailVerificationStep';
+import { TwitterConnectionStep } from './TwitterConnectionStep';
 import { CompletionStep } from './CompletionStep';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface OnboardingData {
   creatorType: string;
   planType: 'free' | 'pro' | 'business';
   referralSource: string;
+  twitterConnected: boolean;
 }
 
-export function OnboardingFlow() {
+interface OnboardingFlowProps {
+  onNavigate: (page: string) => void;
+}
+
+export function OnboardingFlow({ onNavigate }: OnboardingFlowProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -22,11 +29,43 @@ export function OnboardingFlow() {
     creatorType: '',
     planType: 'free',
     referralSource: '',
+    twitterConnected: false,
   });
 
   const { currentUser, refreshUserProfile } = useAuth();
 
-  const totalSteps = 5;
+  const totalSteps = 6;
+
+  useEffect(() => {
+    // Check for payment success redirect
+    // Parameters are in the hash after '?' (e.g., /#/onboarding?step=5&checkout=success)
+    const hashParts = window.location.hash.split('?');
+    const urlParams = new URLSearchParams(hashParts[1] || '');
+    const checkoutStatus = urlParams.get('checkout');
+    const plan = urlParams.get('plan');
+    const step = urlParams.get('step');
+
+    if (checkoutStatus === 'success' && plan) {
+      toast.success(`🎉 Payment successful! Welcome to ${plan === 'pro' ? 'Pro' : 'Business'}!`, {
+        duration: 5000,
+        icon: '✨',
+      });
+      
+      // Update plan type in onboarding data
+      setOnboardingData(prev => ({
+        ...prev,
+        planType: plan as 'pro' | 'business'
+      }));
+
+      // Set current step from URL (should be step 5 - Twitter connection)
+      if (step) {
+        setCurrentStep(parseInt(step));
+      }
+
+      // Clean up URL - remove query params from hash
+      window.location.hash = hashParts[0];
+    }
+  }, []);
 
   const updateOnboardingData = (field: keyof OnboardingData, value: string) => {
     setOnboardingData(prev => ({
@@ -61,6 +100,12 @@ export function OnboardingFlow() {
     try {
       await UserService.completeOnboarding(currentUser.uid, onboardingData);
       await refreshUserProfile();
+      
+      // Navigate to dashboard after successful completion
+      toast.success('Welcome to QuikThread! 🎉');
+      setTimeout(() => {
+        onNavigate('dashboard');
+      }, 1000);
     } catch (error: any) {
       setError(error.message || 'Failed to complete onboarding');
     } finally {
@@ -79,6 +124,8 @@ export function OnboardingFlow() {
       case 4:
         return true; // Email verification step
       case 5:
+        return true; // Twitter connection step (optional)
+      case 6:
         return true; // Completion step
       default:
         return false;
@@ -116,6 +163,21 @@ export function OnboardingFlow() {
         );
       case 5:
         return (
+          <TwitterConnectionStep
+            onConnect={async (connected) => {
+              updateOnboardingData('twitterConnected', connected.toString());
+              // If we're on step 5 (Twitter connection), automatically complete onboarding
+              // This is typically reached after payment redirect
+              await completeOnboarding();
+            }}
+            onSkip={async () => {
+              // Also complete onboarding if user skips
+              await completeOnboarding();
+            }}
+          />
+        );
+      case 6:
+        return (
           <CompletionStep
             onboardingData={onboardingData}
             loading={loading}
@@ -141,7 +203,7 @@ export function OnboardingFlow() {
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-emerald-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentStep / totalSteps) * 100}%` }}
             />
           </div>
@@ -167,7 +229,7 @@ export function OnboardingFlow() {
             <button
               onClick={handleNext}
               disabled={!isStepValid() || loading}
-              className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center px-6 py-3 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Continue
               <ChevronRight className="w-5 h-5 ml-2" />

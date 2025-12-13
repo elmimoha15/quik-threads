@@ -16,8 +16,11 @@ class Settings(BaseSettings):
     twitter_access_token: Optional[str] = None
     twitter_access_secret: Optional[str] = None
     
-    # Polar.sh Webhook Secret
+    # Polar.sh Configuration
     polar_webhook_secret: Optional[str] = None
+    polar_access_token: Optional[str] = None
+    polar_product_id_pro: Optional[str] = None
+    polar_product_id_business: Optional[str] = None
     
     # Environment
     environment: str = "development"

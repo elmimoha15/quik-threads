@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Check, Loader2, Zap, Crown, Gift } from 'lucide-react';
+import polarService from '../../lib/polarService';
+import { useAuth } from '../../contexts/AuthContext';
+import toast from 'react-hot-toast';
+import { UserService } from '../../lib/userService';
 
 interface Plan {
   id: string;
@@ -83,6 +87,8 @@ interface PlanSelectionStepProps {
 export function PlanSelectionStep({ selectedPlan, onSelect }: PlanSelectionStepProps) {
   const [plans] = useState<Plan[]>(defaultPlans);
   const [loading, setLoading] = useState(true);
+  const [processingCheckout, setProcessingCheckout] = useState(false);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     // Mock loading delay
@@ -92,6 +98,46 @@ export function PlanSelectionStep({ selectedPlan, onSelect }: PlanSelectionStepP
 
     return () => clearTimeout(timer);
   }, []);
+
+  const handlePlanSelection = async (planId: string) => {
+    onSelect(planId);
+
+    // If user selects a paid plan, initiate checkout
+    if (planId === 'pro' || planId === 'business') {
+      await handleCheckout(planId);
+    }
+  };
+
+  const handleCheckout = async (planId: string) => {
+    if (!currentUser?.email) {
+      toast.error('Please log in to continue');
+      return;
+    }
+
+    setProcessingCheckout(true);
+
+    try {
+      // IMPORTANT: Mark onboarding as complete BEFORE redirecting to Polar
+      // This prevents users from being sent back to onboarding after payment
+      await UserService.completeOnboarding(currentUser.uid, {
+        creatorType: 'creator', // Default value
+        planType: planId,
+        referralSource: 'direct'
+      });
+
+      // New backend-based checkout with secure token handling
+      await polarService.checkoutAndRedirect({
+        planType: planId as 'pro' | 'business',
+        customerEmail: currentUser.email,
+        customerName: currentUser.displayName || undefined,
+        userId: currentUser.uid,
+      });
+    } catch (error: any) {
+      console.error('Checkout error:', error);
+      toast.error(error.message || 'Failed to start checkout');
+      setProcessingCheckout(false);
+    }
+  };
 
   const formatFileSize = (sizeInMB: number) => {
     if (sizeInMB >= 1000) {
@@ -103,8 +149,18 @@ export function PlanSelectionStep({ selectedPlan, onSelect }: PlanSelectionStepP
   if (loading) {
     return (
       <div className="text-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-emerald-600" />
         <p className="text-gray-600">Loading subscription plans...</p>
+      </div>
+    );
+  }
+
+  if (processingCheckout) {
+    return (
+      <div className="text-center py-12">
+        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-emerald-600" />
+        <p className="text-gray-600 mb-2">Redirecting to secure checkout...</p>
+        <p className="text-sm text-gray-500">Please wait while we prepare your payment page</p>
       </div>
     );
   }
@@ -124,14 +180,14 @@ export function PlanSelectionStep({ selectedPlan, onSelect }: PlanSelectionStepP
             key={plan.id}
             className={`relative rounded-lg border-2 transition-all duration-200 cursor-pointer ${
               selectedPlan === plan.id
-                ? 'border-blue-500 shadow-lg'
+                ? 'border-emerald-500 shadow-lg'
                 : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
             }`}
-            onClick={() => onSelect(plan.id)}
+            onClick={() => handlePlanSelection(plan.id)}
           >
             {plan.popular && (
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                <span className="bg-emerald-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
                   <Crown className="w-4 h-4 mr-1" />
                   Most Popular
                 </span>
@@ -142,7 +198,7 @@ export function PlanSelectionStep({ selectedPlan, onSelect }: PlanSelectionStepP
               <div className="text-center mb-6">
                 <div className="flex items-center justify-center mb-2">
                   {plan.id === 'free' && <Gift className="w-6 h-6 text-green-500 mr-2" />}
-                  {plan.id === 'pro' && <Zap className="w-6 h-6 text-blue-500 mr-2" />}
+                  {plan.id === 'pro' && <Zap className="w-6 h-6 text-emerald-500 mr-2" />}
                   {plan.id === 'business' && <Crown className="w-6 h-6 text-purple-500 mr-2" />}
                   <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
                 </div>
@@ -179,11 +235,19 @@ export function PlanSelectionStep({ selectedPlan, onSelect }: PlanSelectionStepP
               <button
                 className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
                   selectedPlan === plan.id
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-emerald-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePlanSelection(plan.id);
+                }}
+                disabled={processingCheckout}
               >
-                {selectedPlan === plan.id ? 'Selected' : 'Select Plan'}
+                {selectedPlan === plan.id 
+                  ? (plan.id === 'free' ? 'Selected' : 'Continue to Checkout') 
+                  : 'Select Plan'
+                }
               </button>
             </div>
           </div>
@@ -191,11 +255,11 @@ export function PlanSelectionStep({ selectedPlan, onSelect }: PlanSelectionStepP
       </div>
 
       {selectedPlan && (
-        <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-blue-800 text-sm">
+        <div className="mt-8 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+          <p className="text-emerald-800 text-sm">
             <strong>Selected Plan:</strong> {plans.find(p => p.id === selectedPlan)?.name}
             {selectedPlan === 'free' && (
-              <span className="ml-2 text-blue-600">
+              <span className="ml-2 text-emerald-600">
                 • You can upgrade anytime to unlock more features
               </span>
             )}

@@ -10,14 +10,14 @@ import TopicStep from '../components/generator/TopicStep';
 import ContentSourceStep from '../components/generator/ContentSourceStep';
 import CustomizeStep from '../components/generator/CustomizeStep';
 import { validateUrl, normalizeUrl, getPlatformDisplayName } from '../utils/urlValidator';
-import { addThreadToList } from '../utils/threadUtils';
+import { firestoreThreadService } from '../services/firestoreThreadService';
 
 interface GeneratorProps {
   onNavigate: (page: string) => void;
 }
 
 export default function Generator({ onNavigate }: GeneratorProps) {
-  const { userProfile, usageData, refreshUsageData } = useAuth();
+  const { currentUser, userProfile, usageData, refreshUsageData } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [topic, setTopic] = useState('');
   const [contentSource, setContentSource] = useState<'file' | 'url' | null>(null);
@@ -125,28 +125,27 @@ export default function Generator({ onNavigate }: GeneratorProps) {
         
         localStorage.setItem('currentJob', JSON.stringify(jobData));
         
-        // Add to threads list immediately with "processing" status (prevents duplicates)
+        // Save to Firestore instead of localStorage
         const newThread = {
           id: result.jobId,
-          topic: topic || file?.name || 'Content Generation',
-          title: topic || file?.name || 'Content Generation',
-          status: 'processing',
+          title: topic || file?.name || url || 'Content Generation',
+          status: 'processing' as const,
           createdAt: new Date().toISOString(),
-          tweets: 0,
-          preview: aiInstructions || 'Generating...',
-          progress: 0
+          contentSource: file?.name || url || topic,
         };
         
-        // This will only add if it doesn't already exist
-        const wasAdded = addThreadToList(newThread);
-        
-        // Only show toast if thread was newly added
-        if (wasAdded) {
-          toast.success('Thread generation started! You can navigate to other pages while it processes.', {
-            duration: 4000,
-            icon: '✨',
-          });
+        try {
+          await firestoreThreadService.addThread(currentUser!.uid, newThread);
+          console.log('✅ Thread saved to Firestore');
+        } catch (firestoreError) {
+          console.error('Failed to save thread to Firestore:', firestoreError);
+          // Don't block the generation, just log the error
         }
+        
+        toast.success('Thread generation started! You can navigate to other pages while it processes.', {
+          duration: 4000,
+          icon: '✨',
+        });
         
         // Refresh usage data after successful job creation
         refreshUsageData();
@@ -169,7 +168,7 @@ export default function Generator({ onNavigate }: GeneratorProps) {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f5f5f5' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#f8faf9' }}>
       <Sidebar currentPage="dashboard" onNavigate={onNavigate} />
 
       <div className="ml-64 p-8">
@@ -180,7 +179,7 @@ export default function Generator({ onNavigate }: GeneratorProps) {
           >
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h1 className="text-4xl font-bold mb-4" style={{ color: '#1a1a1a' }}>Generate X Posts</h1>
+                <h1 className="text-4xl font-bold mb-4" style={{ color: '#0f1a14' }}>Generate X Posts</h1>
                 <p className="text-xl mb-6" style={{ color: '#6b7280' }}>
                   Transform your content into engaging X posts in minutes
                 </p>

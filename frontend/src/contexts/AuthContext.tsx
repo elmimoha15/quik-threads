@@ -91,6 +91,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (user) {
         console.log('Loading user profile for UID:', user.uid);
         
+        // Store user ID in localStorage for job polling service
+        localStorage.setItem('userId', user.uid);
+        
         // Add a small delay to ensure user is fully authenticated
         await new Promise(resolve => setTimeout(resolve, 100));
         
@@ -133,6 +136,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       } else {
         setUserProfile(null);
         setUsageData(null);
+        // Clear user ID from localStorage when user logs out
+        localStorage.removeItem('userId');
       }
       
       setLoading(false);

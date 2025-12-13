@@ -20,11 +20,11 @@ export default function TopicStep({ topic, setTopic, setCurrentStep }: TopicStep
         boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
       }}>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#6b7ba3' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#10b981' }}>
             <FileText className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold" style={{ color: '#1a1a1a' }}>Topic or Idea</h3>
+            <h3 className="text-xl font-bold" style={{ color: '#0f1a14' }}>Topic or Idea</h3>
             <p className="text-base" style={{ color: '#6b7280' }}>What would you like to create X posts about?</p>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function TopicStep({ topic, setTopic, setCurrentStep }: TopicStep
               style={{
                 border: '1px solid #e5e7eb',
                 backgroundColor: '#f9fafb',
-                color: '#1a1a1a'
+                color: '#0f1a14'
               }}
             >
               + {suggestion}
@@ -72,8 +72,8 @@ export default function TopicStep({ topic, setTopic, setCurrentStep }: TopicStep
           whileTap={topic.trim() ? { scale: 0.98 } : {}}
           className="w-full py-5 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-4 mt-6 text-white"
           style={{
-            backgroundColor: topic.trim() ? '#6b7ba3' : '#d1d5db',
-            boxShadow: topic.trim() ? '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' : 'none',
+            backgroundColor: topic.trim() ? '#10b981' : '#d1d5db',
+            boxShadow: topic.trim() ? '0 4px 6px -1px rgb(16 185 129 / 0.3), 0 2px 4px -2px rgb(16 185 129 / 0.2)' : 'none',
             cursor: topic.trim() ? 'pointer' : 'not-allowed'
           }}
         >

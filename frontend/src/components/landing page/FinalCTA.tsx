@@ -12,10 +12,10 @@ export function FinalCTA({ onJoinWaitlist }: FinalCTAProps) {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section ref={ref} className="py-24 bg-gradient-to-br from-[#516289] via-[#3d4a63] to-[#2a3441] relative overflow-hidden">
+    <section ref={ref} className="py-24 bg-gradient-to-br from-[#0f1a14] via-[#1a2e23] to-[#0f1a14] relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
         <motion.div
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-400 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.3, 0.6, 0.3],
@@ -27,7 +27,7 @@ export function FinalCTA({ onJoinWaitlist }: FinalCTAProps) {
           }}
         />
         <motion.div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white rounded-full blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-500 rounded-full blur-3xl"
           animate={{
             scale: [1.3, 1, 1.3],
             opacity: [0.6, 0.3, 0.6],
@@ -77,11 +77,11 @@ export function FinalCTA({ onJoinWaitlist }: FinalCTAProps) {
         >
           <button
             onClick={onJoinWaitlist}
-            className="group relative inline-flex items-center gap-2 px-10 py-5 bg-white text-[#516289] font-bold text-xl rounded-full hover:shadow-2xl transition-all duration-300 hover:scale-110"
+            className="group relative inline-flex items-center gap-2 px-10 py-5 bg-emerald-500 text-white font-bold text-xl rounded-full hover:shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-emerald-400"
           >
             Get Early Access
             <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-white to-gray-100 opacity-0 group-hover:opacity-100 transition-opacity -z-10 blur-xl" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity -z-10 blur-xl" />
           </button>
         </motion.div>
 

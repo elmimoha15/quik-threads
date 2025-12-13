@@ -16,7 +16,7 @@ const testimonials = [
     role: 'YouTube Content Creator',
     avatar: 'MR',
     quote: 'I was spending hours repurposing my videos. Now I just upload and go. The AI actually understands the context and pulls out the best moments.',
-    color: 'from-blue-500 to-cyan-500',
+    color: 'from-emerald-500 to-teal-500',
   },
   {
     name: 'Emily Thompson',
@@ -64,9 +64,9 @@ export function Testimonials() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="group"
             >
-              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-2xl hover:border-[#516289] transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
+              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-2xl hover:border-emerald-500 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
                 <div className="absolute top-0 right-0 opacity-10">
-                  <Quote className="w-24 h-24 text-[#516289]" />
+                  <Quote className="w-24 h-24 text-emerald-500" />
                 </div>
 
                 <div className="relative z-10">

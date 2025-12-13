@@ -18,7 +18,7 @@ export default function CreditsDisplay({ usage, onNavigate }: CreditsDisplayProp
     }}>
       <Zap className="w-5 h-5" style={{ color: '#f59e0b' }} />
       <div className="text-left">
-        <p className="text-sm font-medium" style={{ color: '#1a1a1a' }}>
+        <p className="text-sm font-medium" style={{ color: '#0f1a14' }}>
           {creditsUsed} / {maxCredits} credits used
         </p>
         {remaining > 0 && (
@@ -31,7 +31,7 @@ export default function CreditsDisplay({ usage, onNavigate }: CreditsDisplayProp
             onClick={() => onNavigate('billing')}
             className="text-xs px-3 py-1 rounded-lg transition text-white"
             style={{
-              backgroundColor: '#6b7ba3'
+              backgroundColor: '#10b981'
             }}
           >
             Add Credits

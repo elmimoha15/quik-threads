@@ -39,11 +39,11 @@ export default function ContentSourceStep({
         boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
       }}>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#6b7ba3' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#10b981' }}>
             <FileText className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold" style={{ color: '#1a1a1a' }}>Content Source</h3>
+            <h3 className="text-xl font-bold" style={{ color: '#0f1a14' }}>Content Source</h3>
             <p className="text-base" style={{ color: '#6b7280' }}>Select a content source</p>
           </div>
         </div>
@@ -54,11 +54,11 @@ export default function ContentSourceStep({
           boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
         }}>
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#dbeafe' }}>
-              <Link className="w-6 h-6" style={{ color: '#3b82f6' }} />
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#d1fae5' }}>
+              <Link className="w-6 h-6" style={{ color: '#10b981' }} />
             </div>
             <div>
-              <h3 className="text-lg font-bold" style={{ color: '#1a1a1a' }}>Content Source (Optional)</h3>
+              <h3 className="text-lg font-bold" style={{ color: '#0f1a14' }}>Content Source (Optional)</h3>
               <p className="text-sm" style={{ color: '#6b7280' }}>Add a URL or file to enhance your topic</p>
             </div>
           </div>
@@ -126,7 +126,7 @@ export default function ContentSourceStep({
               <div className="flex items-center justify-center gap-4 mb-4">
                 <CheckCircle className="w-10 h-10" style={{ color: '#10b981' }} />
                 <div className="text-left">
-                  <p className="font-semibold text-base" style={{ color: '#1a1a1a' }}>{file.name}</p>
+                  <p className="font-semibold text-base" style={{ color: '#0f1a14' }}>{file.name}</p>
                   <p className="text-sm" style={{ color: '#10b981' }}>File uploaded successfully</p>
                 </div>
               </div>
@@ -144,7 +144,7 @@ export default function ContentSourceStep({
               onDragOver={(e) => e.preventDefault()}
               onDragEnter={(e) => e.preventDefault()}
               onDrop={(e) => handleFileDrop(e as any)}
-              className="block border-2 border-dashed rounded-2xl p-10 text-center transition cursor-pointer hover:border-blue-400"
+              className="block border-2 border-dashed rounded-2xl p-10 text-center transition cursor-pointer hover:border-emerald-400"
               style={{
                 borderColor: '#e5e7eb',
                 backgroundColor: '#f9fafb'
@@ -160,7 +160,7 @@ export default function ContentSourceStep({
                 className="hidden"
               />
               <Upload className="w-12 h-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
-              <p className="text-base font-medium mb-2" style={{ color: '#1a1a1a' }}>Drop files here or click to browse</p>
+              <p className="text-base font-medium mb-2" style={{ color: '#0f1a14' }}>Drop files here or click to browse</p>
               <p className="text-sm" style={{ color: '#6b7280' }}>MP3, MP4, MOV up to 500MB</p>
             </label>
           )}
@@ -173,8 +173,8 @@ export default function ContentSourceStep({
           whileTap={{ scale: 0.98 }}
           className="w-full flex items-center justify-center gap-3 px-8 py-5 rounded-xl font-bold text-base transition text-white"
           style={{
-            backgroundColor: '#6b7ba3',
-            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+            backgroundColor: '#10b981',
+            boxShadow: '0 4px 6px -1px rgb(16 185 129 / 0.3), 0 2px 4px -2px rgb(16 185 129 / 0.2)'
           }}
         >
           Continue to Customization

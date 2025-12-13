@@ -24,7 +24,7 @@ class PolarService:
         Verify webhook signature using HMAC-SHA256
         
         Polar.sh follows the Standard Webhooks specification.
-        The secret must be base64 encoded before generating the signature.
+        Signature header format: "v1,signature1 v1,signature2"
         
         Args:
             payload: Raw request body as bytes
@@ -38,21 +38,34 @@ class PolarService:
                 logger.error("Polar webhook secret not configured")
                 return False
             
-            # Base64 encode the secret as per Standard Webhooks spec
-            secret_bytes = base64.b64encode(self.webhook_secret.encode())
+            # Standard Webhooks format: "v1,base64sig v1,base64sig"
+            # We need to check if any signature matches
+            signatures = signature.split(' ')
             
-            # Generate HMAC-SHA256 signature
-            expected_signature = hmac.new(
-                secret_bytes,
-                payload,
-                hashlib.sha256
-            ).digest()
+            for sig_part in signatures:
+                if ',' in sig_part:
+                    version, sig_value = sig_part.split(',', 1)
+                    if version == 'v1':
+                        # The secret is already base64 encoded in the dashboard
+                        # We need to decode it first
+                        secret_bytes = base64.b64decode(self.webhook_secret.replace('polar_whs_', ''))
+                        
+                        # Generate HMAC-SHA256 signature
+                        expected_signature = hmac.new(
+                            secret_bytes,
+                            payload,
+                            hashlib.sha256
+                        ).digest()
+                        
+                        # Base64 encode the signature
+                        expected_signature_b64 = base64.b64encode(expected_signature).decode()
+                        
+                        # Compare signatures (constant-time comparison)
+                        if hmac.compare_digest(sig_value, expected_signature_b64):
+                            return True
             
-            # Base64 encode the signature
-            expected_signature_b64 = base64.b64encode(expected_signature).decode()
-            
-            # Compare signatures (constant-time comparison)
-            return hmac.compare_digest(signature, expected_signature_b64)
+            logger.error("No matching signature found")
+            return False
             
         except Exception as e:
             logger.error(f"Error verifying webhook signature: {str(e)}")

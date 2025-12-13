@@ -19,7 +19,7 @@ export function CompletionStep({ onboardingData, loading, error, onComplete }: C
       case 'free':
         return <Gift className="w-6 h-6 text-green-500" />;
       case 'pro':
-        return <Zap className="w-6 h-6 text-blue-500" />;
+        return <Zap className="w-6 h-6 text-emerald-500" />;
       case 'business':
         return <Crown className="w-6 h-6 text-purple-500" />;
       default:
@@ -108,24 +108,24 @@ export function CompletionStep({ onboardingData, loading, error, onComplete }: C
       </div>
 
       {/* What's Next */}
-      <div className="bg-blue-50 rounded-lg p-6 mb-8">
-        <h3 className="text-lg font-semibold text-blue-900 mb-3">What happens next?</h3>
-        <ul className="space-y-2 text-blue-800">
+      <div className="bg-emerald-50 rounded-lg p-6 mb-8">
+        <h3 className="text-lg font-semibold text-emerald-900 mb-3">What happens next?</h3>
+        <ul className="space-y-2 text-emerald-800">
           <li className="flex items-start">
-            <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+            <CheckCircle className="w-5 h-5 text-emerald-600 mr-2 mt-0.5 flex-shrink-0" />
             Your account will be set up with your selected plan
           </li>
           <li className="flex items-start">
-            <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+            <CheckCircle className="w-5 h-5 text-emerald-600 mr-2 mt-0.5 flex-shrink-0" />
             You'll get access to the dashboard and upload features
           </li>
           <li className="flex items-start">
-            <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+            <CheckCircle className="w-5 h-5 text-emerald-600 mr-2 mt-0.5 flex-shrink-0" />
             Start creating amazing content with AI-powered threads
           </li>
           {onboardingData.planType !== 'free' && (
             <li className="flex items-start">
-              <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+              <CheckCircle className="w-5 h-5 text-emerald-600 mr-2 mt-0.5 flex-shrink-0" />
               Premium features will be activated immediately
             </li>
           )}
@@ -147,7 +147,7 @@ export function CompletionStep({ onboardingData, loading, error, onComplete }: C
       <button
         onClick={onComplete}
         disabled={loading}
-        className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-lg font-medium"
+        className="w-full bg-emerald-600 text-white py-4 px-6 rounded-lg hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-lg font-medium"
       >
         {loading ? (
           <>

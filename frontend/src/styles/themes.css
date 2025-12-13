@@ -1,54 +1,75 @@
-/* QuikThread Theme Variables - Based on Screenshots */
+/* QuikThread Theme Variables - Dark Green SaaS Theme */
 :root {
-  /* Background Colors */
-  --background: #1a1a1a; /* Very dark sidebar background */
-  --background-secondary: #f5f5f5; /* Light gray main content background */
-  --background-tertiary: #ffffff; /* White cards */
+  /* Dark Background Colors (Hero/Sidebar) */
+  --background-dark: #0f1a14;
+  --background-dark-secondary: #1a2e23;
+  --background-dark-tertiary: #254535;
+  
+  /* Light Background Colors (Content Areas) */
+  --background: #f8faf9;
+  --background-secondary: #ffffff;
+  --background-tertiary: #f0fdf4;
   
   /* Text Colors */
-  --text-primary: #1a1a1a; /* Dark text for headings */
-  --text-secondary: #6b7280; /* Medium gray for secondary text */
-  --text-muted: #9ca3af; /* Light gray for muted text */
-  --text-light: #d1d5db; /* Very light gray for placeholders */
+  --text-primary: #0f1a14;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-light: #d1d5db;
+  --text-on-dark: #ffffff;
+  --text-on-dark-muted: #9ca3af;
   
-  /* Primary Brand Colors - Blue/Purple Button */
-  --primary: #6b7ba3; /* Slate blue for buttons */
-  --primary-hover: #596c96; /* Slightly darker on hover */
-  --primary-light: #8a96b8; /* Lighter variant */
-  --primary-dark: #4a5b7d; /* Dark variant */
-  --primary-50: #f0f2f6; /* Very light blue */
-  --primary-100: #e1e6ed; /* Light blue background */
+  /* Primary Brand Colors - Emerald Green */
+  --primary: #10b981;
+  --primary-hover: #059669;
+  --primary-light: #34d399;
+  --primary-dark: #047857;
+  --primary-50: #ecfdf5;
+  --primary-100: #d1fae5;
+  --primary-200: #a7f3d0;
+  --primary-500: #10b981;
+  --primary-600: #059669;
+  --primary-700: #047857;
   
   /* Secondary Colors */
-  --secondary: #e5e7eb; /* Light gray for borders and dividers */
-  --secondary-hover: #d1d5db; /* Slightly darker on hover */
-  --secondary-light: #f3f4f6; /* Very light gray */
+  --secondary: #e5e7eb;
+  --secondary-hover: #d1d5db;
+  --secondary-light: #f3f4f6;
   
   /* Card Colors */
-  --card-bg: #ffffff; /* White cards */
-  --card-border: #e5e7eb; /* Light gray border */
-  --card-hover: #f9fafb; /* Slightly gray on hover */
+  --card-bg: #ffffff;
+  --card-bg-dark: #1a2e23;
+  --card-border: #e5e7eb;
+  --card-border-dark: #254535;
+  --card-hover: #f9fafb;
   --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --card-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   
   /* Status Colors */
-  --success: #10b981; /* Green for success */
-  --success-light: #d1fae5; /* Light green background */
-  --warning: #f59e0b; /* Amber for warning */
-  --warning-light: #fef3c7; /* Light amber background */
-  --error: #ef4444; /* Red for errors */
-  --error-light: #fee2e2; /* Light red background */
-  --info: #3b82f6; /* Blue for info */
-  --info-light: #dbeafe; /* Light blue background */
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --error: #ef4444;
+  --error-light: #fee2e2;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
   
   /* Icon Background Colors */
-  --icon-blue-bg: #dbeafe; /* Light blue for icons */
-  --icon-green-bg: #d1fae5; /* Light green for icons */
-  --icon-purple-bg: #e9d5ff; /* Light purple for icons */
+  --icon-green-bg: #d1fae5;
+  --icon-blue-bg: #dbeafe;
+  --icon-purple-bg: #e9d5ff;
+  --icon-amber-bg: #fef3c7;
   
   /* Gradient Backgrounds */
-  --gradient-primary: linear-gradient(135deg, #6b7ba3 0%, #596c96 100%);
-  --gradient-secondary: linear-gradient(135deg, #f5f5f5 0%, #e5e7eb 100%);
+  --gradient-primary: linear-gradient(135deg, #0f1a14 0%, #1a2e23 100%);
+  --gradient-secondary: linear-gradient(135deg, #1a2e23 0%, #254535 100%);
+  --gradient-hero: linear-gradient(135deg, #0f1a14 0%, #1a2e23 50%, #0f1a14 100%);
+  --gradient-cta: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  
+  /* Glass Morphism */
+  --glass-bg: rgba(26, 46, 35, 0.8);
+  --glass-border: rgba(37, 69, 53, 0.5);
+  --glass-backdrop: blur(12px);
   
   /* Shadows */
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -57,37 +78,9 @@
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-green: 0 4px 14px 0 rgba(16, 185, 129, 0.3);
   
-  /* Status Colors */
-  --success: #10b981; /* Emerald-500 - brighter for dark mode */
-  --success-light: #065f46; /* Emerald-800 dark */
-  --warning: #f59e0b; /* Amber-500 - matches screenshots */
-  --warning-light: #78350f; /* Amber-900 dark */
-  --error: #ef4444; /* Red-500 - brighter */
-  --error-light: #7f1d1d; /* Red-900 dark */
-  --info: #3b82f6; /* Blue-500 - brighter */
-  --info-light: #1e3a8a; /* Blue-900 dark */
-  
-  /* Gradient Backgrounds - SaaS Theme */
-  --gradient-primary: linear-gradient(135deg, #596c96 0%, #6b7ba3 100%);
-  --gradient-secondary: linear-gradient(135deg, #596c96 0%, #2d3446 100%);
-  --gradient-hero: linear-gradient(135deg, #596c96 0%, #3d4a63 100%);
-  --gradient-subtle: linear-gradient(135deg, #2d3446 0%, #374151 100%);
-  
-  /* Glass Morphism - Dark Mode */
-  --glass-bg: rgba(45, 52, 70, 0.8);
-  --glass-border: rgba(55, 65, 81, 0.5);
-  --glass-backdrop: blur(12px);
-  
-  /* Shadows - Dark Mode */
-  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.2);
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.2);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.2);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.2);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.2);
-  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.4);
-  
-  /* Border Radius - Modern, Consistent */
+  /* Border Radius */
   --radius-xs: 0.25rem;
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
@@ -121,11 +114,9 @@
   --transition-slow: 300ms ease-in-out;
   
   /* Interactive States */
-  --hover-opacity: 0.8;
-  --active-scale: 0.95;
+  --hover-opacity: 0.9;
+  --active-scale: 0.98;
 }
-
-/* Light mode only - dark theme removed */
 
 /* Utility classes for gradients */
 .bg-gradient-primary {
@@ -140,12 +131,21 @@
   background: var(--gradient-hero);
 }
 
+.bg-gradient-cta {
+  background: var(--gradient-cta);
+}
+
 /* Glass morphism utility */
 .glass {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   backdrop-filter: var(--glass-backdrop);
   -webkit-backdrop-filter: var(--glass-backdrop);
+}
+
+/* Green glow effect for CTAs */
+.glow-green {
+  box-shadow: var(--shadow-green);
 }
 
 /* Animation utilities */

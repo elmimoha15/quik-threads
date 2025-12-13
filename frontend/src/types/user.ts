@@ -23,13 +23,23 @@ export interface UserProfile {
   referralSource?: string;
   onboardingCompleted: boolean;
   
-  // Subscription data
-  plan: UserPlan['id'];
-  planStartDate: Date;
+  // Subscription data (old format - keeping for backwards compatibility)
+  plan?: UserPlan['id'];
+  planStartDate?: Date;
+  
+  // New backend format (from Firestore)
+  tier?: 'free' | 'pro' | 'business';
+  maxCredits?: number;
+  currentCredits?: number;
+  maxDuration?: number;
+  features?: {
+    postToX?: boolean;
+    analytics?: boolean;
+  };
   
   // Usage tracking
-  currentPeriodStart: Date;
-  generationsUsed: number;
+  currentPeriodStart?: Date;
+  generationsUsed?: number;
 }
 
 export const PLANS: Record<UserPlan['id'], UserPlan> = {

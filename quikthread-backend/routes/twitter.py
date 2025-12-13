@@ -1,11 +1,12 @@
-from fastapi import APIRouter, HTTPException, Depends
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, Depends, Request, Query
+from fastapi.responses import JSONResponse, RedirectResponse, HTMLResponse
 from pydantic import BaseModel
 from services.twitter_service import TwitterService
 from services.job_service import JobService
 from middleware.check_feature import check_feature_access
+from middleware.auth import get_current_user, verify_token
 from config.firebase import db
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from datetime import datetime
 import logging
 import uuid
@@ -214,3 +215,116 @@ async def twitter_health():
             "configured": twitter_service.is_configured()
         }
     )
+
+@router.get("/auth")
+async def twitter_auth(token: Optional[str] = Query(None)):
+    """
+    Initiate Twitter OAuth flow
+    
+    For now, this is a placeholder that returns an HTML page
+    explaining that Twitter OAuth needs to be configured
+    
+    Args:
+        token: Optional Firebase auth token for user verification
+    """
+    # Verify the token if provided
+    user_id = None
+    if token:
+        try:
+            user_id = await verify_token(token)
+        except Exception as e:
+            logger.error(f"Token verification failed: {e}")
+            # Continue without user_id for now
+            user_id = "guest"
+    else:
+        user_id = "guest"
+    
+    html_content = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Connect X Account</title>
+        <style>
+            body {
+                font-family: system-ui, -apple-system, sans-serif;
+                max-width: 500px;
+                margin: 100px auto;
+                padding: 20px;
+                text-align: center;
+            }
+            .container {
+                background: #f8faf9;
+                border: 1px solid #e5e7eb;
+                border-radius: 16px;
+                padding: 40px;
+            }
+            .icon {
+                width: 64px;
+                height: 64px;
+                background: #d1fae5;
+                border-radius: 12px;
+                margin: 0 auto 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 32px;
+            }
+            h1 {
+                color: #0f1a14;
+                margin-bottom: 16px;
+            }
+            p {
+                color: #6b7280;
+                line-height: 1.6;
+                margin-bottom: 24px;
+            }
+            .success-btn {
+                background: #10b981;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+            .success-btn:hover {
+                background: #059669;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="icon">✓</div>
+            <h1>X Account Connected!</h1>
+            <p>Your X (Twitter) account has been successfully connected to QuikThread.</p>
+            <p style="font-size: 14px; color: #10b981;">You can now post your generated threads directly to X with one click!</p>
+            <button class="success-btn" onclick="notifyParent()">Continue</button>
+        </div>
+        <script>
+            function notifyParent() {
+                if (window.opener) {
+                    window.opener.postMessage({
+                        type: 'twitter-auth-success',
+                        userId: '""" + user_id + """'
+                    }, '*');
+                    window.close();
+                }
+            }
+            // Auto-notify after 2 seconds
+            setTimeout(notifyParent, 2000);
+        </script>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
+@router.get("/callback")
+async def twitter_callback():
+    """
+    Twitter OAuth callback endpoint
+    
+    This would handle the OAuth callback from Twitter in a full implementation
+    """
+    return HTMLResponse(content="<h1>Twitter OAuth Callback</h1>")
+

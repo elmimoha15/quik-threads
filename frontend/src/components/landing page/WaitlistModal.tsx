@@ -51,7 +51,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
               transition={{ type: 'spring', duration: 0.5 }}
               className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 pointer-events-auto relative overflow-hidden"
             >
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#516289] to-[#3d4a63]" />
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 to-emerald-700" />
 
               <button
                 onClick={onClose}
@@ -68,7 +68,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <div className="w-16 h-16 bg-gradient-to-br from-[#516289] to-[#3d4a63] rounded-2xl flex items-center justify-center mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl flex items-center justify-center mb-6">
                       <Mail className="w-8 h-8 text-white" />
                     </div>
 
@@ -91,7 +91,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="you@example.com"
                           required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#516289] focus:border-transparent transition-all outline-none"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none"
                         />
                       </div>
 
@@ -108,7 +108,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-gradient-to-r from-[#516289] to-[#3d4a63] text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                        className="w-full bg-gradient-to-r from-emerald-500 to-emerald-700 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
                       >
                         {isSubmitting ? (
                           <>

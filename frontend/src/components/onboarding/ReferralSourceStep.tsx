@@ -76,7 +76,7 @@ export function ReferralSourceStep({ selectedSource, onSelect }: ReferralSourceS
   if (loading) {
     return (
       <div className="text-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-emerald-600" />
         <p className="text-gray-600">Loading referral sources...</p>
       </div>
     );
@@ -98,17 +98,17 @@ export function ReferralSourceStep({ selectedSource, onSelect }: ReferralSourceS
             onClick={() => onSelect(source.id)}
             className={`p-6 rounded-lg border-2 transition-all duration-200 text-left hover:shadow-md ${
               selectedSource === source.id
-                ? 'border-blue-500 bg-blue-50 shadow-md'
+                ? 'border-emerald-500 bg-emerald-50 shadow-md'
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
-            <div className={`mb-4 ${selectedSource === source.id ? 'text-blue-600' : 'text-gray-600'}`}>
+            <div className={`mb-4 ${selectedSource === source.id ? 'text-emerald-600' : 'text-gray-600'}`}>
               {source.icon}
             </div>
-            <h3 className={`font-semibold mb-2 ${selectedSource === source.id ? 'text-blue-900' : 'text-gray-900'}`}>
+            <h3 className={`font-semibold mb-2 ${selectedSource === source.id ? 'text-emerald-900' : 'text-gray-900'}`}>
               {source.name}
             </h3>
-            <p className={`text-sm ${selectedSource === source.id ? 'text-blue-700' : 'text-gray-600'}`}>
+            <p className={`text-sm ${selectedSource === source.id ? 'text-emerald-700' : 'text-gray-600'}`}>
               {source.description}
             </p>
           </button>
@@ -116,8 +116,8 @@ export function ReferralSourceStep({ selectedSource, onSelect }: ReferralSourceS
       </div>
 
       {selectedSource && (
-        <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-blue-800 text-sm">
+        <div className="mt-8 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+          <p className="text-emerald-800 text-sm">
             <strong>Selected:</strong> {referralSources.find(s => s.id === selectedSource)?.name}
           </p>
         </div>

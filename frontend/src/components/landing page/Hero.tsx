@@ -7,10 +7,10 @@ interface HeroProps {
 
 export function Hero({ onJoinWaitlist }: HeroProps) {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#516289] via-[#3d4a63] to-[#2a3441]">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0f1a14] via-[#1a2e23] to-[#0f1a14]">
       <div className="absolute inset-0 opacity-20">
         <motion.div
-          className="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl"
+          className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-400 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -22,7 +22,7 @@ export function Hero({ onJoinWaitlist }: HeroProps) {
           }}
         />
         <motion.div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white rounded-full blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-500 rounded-full blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
             opacity: [0.5, 0.3, 0.5],
@@ -77,11 +77,11 @@ export function Hero({ onJoinWaitlist }: HeroProps) {
         >
           <button
             onClick={onJoinWaitlist}
-            className="group relative inline-flex items-center gap-2 px-8 py-4 bg-white text-[#516289] font-semibold text-lg rounded-full hover:shadow-2xl transition-all duration-300 hover:scale-105"
+            className="group relative inline-flex items-center gap-2 px-8 py-4 bg-emerald-500 text-white font-semibold text-lg rounded-full hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-emerald-400"
           >
             Join the Waitlist
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-white to-gray-100 opacity-0 group-hover:opacity-100 transition-opacity -z-10 blur" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity -z-10 blur" />
           </button>
         </motion.div>
 

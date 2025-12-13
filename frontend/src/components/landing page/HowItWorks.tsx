@@ -51,12 +51,12 @@ export function HowItWorks() {
               transition={{ duration: 0.6, delay: index * 0.2 }}
               className="relative"
             >
-              <div className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-200 hover:border-[#516289] transition-all duration-300 hover:shadow-xl group">
-                <div className="absolute -top-4 -right-4 w-12 h-12 bg-[#516289] text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">
+              <div className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-200 hover:border-emerald-500 transition-all duration-300 hover:shadow-xl group">
+                <div className="absolute -top-4 -right-4 w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">
                   {index + 1}
                 </div>
 
-                <div className="w-16 h-16 bg-gradient-to-br from-[#516289] to-[#3d4a63] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   <step.icon className="w-8 h-8 text-white" />
                 </div>
 
@@ -70,7 +70,7 @@ export function HowItWorks() {
               </div>
 
               {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-[#516289] to-transparent" />
+                <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-emerald-500 to-transparent" />
               )}
             </motion.div>
           ))}

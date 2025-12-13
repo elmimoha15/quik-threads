@@ -46,7 +46,7 @@ export function DemoPreview() {
         </motion.div>
 
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#516289]/20 to-transparent blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-transparent blur-3xl" />
 
           <div className="relative flex flex-col gap-6 md:gap-8 max-w-2xl mx-auto">
             {sampleTweets.map((tweet, index) => (
@@ -62,7 +62,7 @@ export function DemoPreview() {
               >
                 <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 hover:scale-105">
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-[#596c96] to-[#4a5b7f] rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-bold text-lg">Q</span>
                     </div>
                     <div className="flex-1">
@@ -84,7 +84,7 @@ export function DemoPreview() {
                       <Repeat2 className="w-5 h-5" />
                       <span className="text-sm font-medium">{tweet.retweets}</span>
                     </div>
-                    <div className="flex items-center gap-2 hover:text-blue-500 cursor-pointer transition-colors">
+                    <div className="flex items-center gap-2 hover:text-emerald-500 cursor-pointer transition-colors">
                       <MessageCircle className="w-5 h-5" />
                       <span className="text-sm font-medium">{tweet.replies}</span>
                     </div>

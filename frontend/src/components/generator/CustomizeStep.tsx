@@ -33,11 +33,11 @@ export default function CustomizeStep({
         boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
       }}>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#6b7ba3' }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#10b981' }}>
             <Zap className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold" style={{ color: '#1a1a1a' }}>Content Guidance</h3>
+            <h3 className="text-xl font-bold" style={{ color: '#0f1a14' }}>Content Guidance</h3>
             <p className="text-base" style={{ color: '#6b7280' }}>Describe what kind of content you want, or key points you don't want to miss (optional)</p>
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function CustomizeStep({
               style={{
                 border: '1px solid #e5e7eb',
                 backgroundColor: '#f9fafb',
-                color: '#1a1a1a'
+                color: '#0f1a14'
               }}
             >
               + {suggestion}
@@ -87,7 +87,7 @@ export default function CustomizeStep({
           className="px-8 py-5 rounded-xl font-bold text-base transition-all"
           style={{
             backgroundColor: '#ffffff',
-            color: '#1a1a1a',
+            color: '#0f1a14',
             border: '2px solid #e5e7eb'
           }}
         >
@@ -104,8 +104,8 @@ export default function CustomizeStep({
           style={{
             backgroundColor: isGenerating || !topic.trim() || (usage && (usage.remaining !== undefined ? usage.remaining <= 0 : (usage.creditsUsed || 0) >= (usage.maxCredits || 0)))
               ? '#d1d5db'
-              : '#6b7ba3',
-            boxShadow: (!isGenerating && topic.trim()) ? '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' : 'none',
+              : '#10b981',
+            boxShadow: (!isGenerating && topic.trim()) ? '0 4px 6px -1px rgb(16 185 129 / 0.3), 0 2px 4px -2px rgb(16 185 129 / 0.2)' : 'none',
             cursor: (isGenerating || !topic.trim() || (usage && (usage.remaining !== undefined ? usage.remaining <= 0 : (usage.creditsUsed || 0) >= (usage.maxCredits || 0)))) ? 'not-allowed' : 'pointer'
           }}
         >

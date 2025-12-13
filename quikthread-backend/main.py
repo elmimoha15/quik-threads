@@ -12,6 +12,7 @@ from routes.webhooks import router as webhooks_router
 from routes.twitter import router as twitter_router
 from routes.analytics import router as analytics_router
 from routes.upload import router as upload_router
+from routes.polar import router as polar_router
 from typing import Dict, Any
 
 # Create FastAPI app
@@ -50,6 +51,18 @@ async def health_check():
         "environment": settings.environment
     }
 
+@app.post("/")
+async def root_post_handler():
+    """
+    Handle POST requests to root - likely misconfigured webhooks
+    Polar webhooks should go to /api/webhooks/polar
+    """
+    return {
+        "error": "Webhook endpoint not configured correctly",
+        "message": "If this is a Polar webhook, please update your webhook URL to: {your_domain}/api/webhooks/polar",
+        "correct_endpoint": "/api/webhooks/polar"
+    }
+
 @app.get("/api/health")
 async def api_health_check():
     """API health check endpoint"""
@@ -78,6 +91,7 @@ app.include_router(webhooks_router)
 app.include_router(twitter_router)
 app.include_router(analytics_router)
 app.include_router(upload_router)
+app.include_router(polar_router, prefix="/api/polar", tags=["polar"])
 
 if __name__ == "__main__":
     uvicorn.run(

@@ -5,7 +5,8 @@ import Sidebar from '../components/Sidebar';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../lib/apiService';
 import { usePlanAccess } from '../hooks/usePlanAccess';
-import { removeDuplicateThreads } from '../utils/threadUtils';
+import { firestoreThreadService, Thread } from '../services/firestoreThreadService';
+import toast from 'react-hot-toast';
 
 interface DashboardProps {
   onNavigate: (page: string) => void;
@@ -19,31 +20,40 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
   const [engagementGrowth, setEngagementGrowth] = useState(0);
   const [loading, setLoading] = useState(true);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
-  const [recentThreads, setRecentThreads] = useState<any[]>([]);
+  const [recentThreads, setRecentThreads] = useState<Thread[]>([]);
 
   useEffect(() => {
+    // Check for successful checkout redirect
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('checkout') === 'success') {
+      const plan = urlParams.get('plan');
+      toast.success(`🎉 Welcome to ${plan === 'pro' ? 'Pro' : 'Business'}! Your plan is now active.`, {
+        duration: 5000,
+        icon: '✨',
+      });
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname + window.location.hash.split('?')[0]);
+    }
+
     loadDashboardData();
-  }, []);
+  }, [currentUser]);
 
   const loadDashboardData = async () => {
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       
-      // Remove duplicates first, then load threads count from localStorage
-      const cleanedThreads = removeDuplicateThreads();
-      const threadsList = cleanedThreads || [];
+      // Fetch threads from Firestore
+      const threads = await firestoreThreadService.getUserThreads(currentUser.uid);
       
-      setThreadsCreated(threadsList.length);
+      setThreadsCreated(threads.length);
       
-      // Get last 5 threads sorted by creation date
-      const sortedThreads = threadsList
-        .sort((a: any, b: any) => {
-          const dateA = new Date(a.createdAt || 0).getTime();
-          const dateB = new Date(b.createdAt || 0).getTime();
-          return dateB - dateA;
-        })
-        .slice(0, 5);
-      setRecentThreads(sortedThreads);
+      // Get only the 3 most recent threads
+      setRecentThreads(threads.slice(0, 3));
 
       // Load analytics if user has access
       if (canAccessAnalytics()) {
@@ -63,6 +73,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       }
     } catch (error) {
       console.error('Error loading dashboard data:', error);
+      toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
     }
@@ -95,14 +106,14 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f5f5f5' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#f8faf9' }}>
       <Sidebar currentPage="dashboard" onNavigate={onNavigate} />
 
       <div className="ml-64 p-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-4xl font-bold mb-2" style={{ color: '#1a1a1a' }}>
+              <h1 className="text-4xl font-bold mb-2" style={{ color: '#0f1a14' }}>
                 Welcome back, {userName} 👋
               </h1>
               <p className="text-lg" style={{ color: '#6b7280' }}>
@@ -116,8 +127,8 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center gap-3 px-8 py-4 text-lg font-semibold rounded-xl text-white"
                 style={{ 
-                  backgroundColor: '#6b7ba3',
-                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+                  backgroundColor: '#10b981',
+                  boxShadow: '0 4px 6px -1px rgb(16 185 129 / 0.3), 0 2px 4px -2px rgb(16 185 129 / 0.2)'
                 }}
               >
                 <Plus className="w-6 h-6" />
@@ -139,15 +150,15 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-semibold text-base" style={{ color: '#6b7280' }}>Threads Created</h3>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#dbeafe' }}>
-                  <Sparkles className="w-6 h-6" style={{ color: '#3b82f6' }} />
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#d1fae5' }}>
+                  <Sparkles className="w-6 h-6" style={{ color: '#10b981' }} />
                 </div>
               </div>
               {loading ? (
-                <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#6b7ba3' }} />
+                <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#10b981' }} />
               ) : (
                 <>
-                  <p className="text-4xl font-bold mb-2" style={{ color: '#1a1a1a' }}>{threadsCreated}</p>
+                  <p className="text-4xl font-bold mb-2" style={{ color: '#0f1a14' }}>{threadsCreated}</p>
                   <p className="text-sm font-medium" style={{ color: '#10b981' }}>
                     Total threads generated
                   </p>
@@ -172,10 +183,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 </div>
               </div>
               {analyticsLoading ? (
-                <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#6b7ba3' }} />
+                <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#10b981' }} />
               ) : canAccessAnalytics() ? (
                 <>
-                  <p className="text-4xl font-bold mb-2" style={{ color: '#1a1a1a' }}>
+                  <p className="text-4xl font-bold mb-2" style={{ color: '#0f1a14' }}>
                     {totalEngagement.toLocaleString()}
                   </p>
                   <p className="text-sm font-medium" style={{ color: engagementGrowth >= 0 ? '#10b981' : '#ef4444' }}>
@@ -184,7 +195,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 </>
               ) : (
                 <>
-                  <p className="text-4xl font-bold mb-2" style={{ color: '#1a1a1a' }}>—</p>
+                  <p className="text-4xl font-bold mb-2" style={{ color: '#0f1a14' }}>—</p>
                   <p className="text-sm font-medium" style={{ color: '#6b7280' }}>Upgrade for analytics</p>
                 </>
               )}
@@ -202,17 +213,17 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-semibold text-base" style={{ color: '#6b7280' }}>Usage This Month</h3>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#e9d5ff' }}>
-                  <Clock className="w-6 h-6" style={{ color: '#a855f7' }} />
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#d1fae5' }}>
+                  <Clock className="w-6 h-6" style={{ color: '#10b981' }} />
                 </div>
               </div>
-              <p className="text-4xl font-bold mb-4" style={{ color: '#1a1a1a' }}>
+              <p className="text-4xl font-bold mb-4" style={{ color: '#0f1a14' }}>
                 {creditsUsed} / {creditsLimit}
               </p>
               <div className="w-full rounded-full h-2" style={{ backgroundColor: '#e5e7eb' }}>
                 <div className="h-2 rounded-full" style={{ 
                   width: `${Math.min(100, usagePercentage)}%`,
-                  backgroundColor: '#6b7ba3'
+                  backgroundColor: '#10b981'
                 }} />
               </div>
             </motion.div>
@@ -223,11 +234,11 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
           }}>
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold" style={{ color: '#1a1a1a' }}>Recent Generations</h2>
+              <h2 className="text-2xl font-bold" style={{ color: '#0f1a14' }}>Recent Generations</h2>
               <button 
                 onClick={() => onNavigate('threads')}
                 className="text-sm font-medium hover:underline" 
-                style={{ color: '#6b7ba3' }}
+                style={{ color: '#10b981' }}
               >
                 View All
               </button>
@@ -235,17 +246,17 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
 
             {recentThreads.length === 0 ? (
               <div className="text-center py-12">
-                <div className="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#dbeafe' }}>
-                  <Sparkles className="w-8 h-8" style={{ color: '#3b82f6' }} />
+                <div className="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#d1fae5' }}>
+                  <Sparkles className="w-8 h-8" style={{ color: '#10b981' }} />
                 </div>
-                <h3 className="font-bold text-lg mb-2" style={{ color: '#1a1a1a' }}>No threads yet</h3>
+                <h3 className="font-bold text-lg mb-2" style={{ color: '#0f1a14' }}>No threads yet</h3>
                 <p className="text-sm mb-6" style={{ color: '#6b7280' }}>
                   Get started by creating your first X post thread
                 </p>
                 <button
                   onClick={() => onNavigate('generator')}
                   className="px-6 py-3 rounded-xl font-medium text-white inline-flex items-center gap-2"
-                  style={{ backgroundColor: '#6b7ba3' }}
+                  style={{ backgroundColor: '#10b981' }}
                 >
                   <Plus className="w-5 h-5" />
                   Create Your First Thread
@@ -262,53 +273,53 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                     onClick={() => handleThreadClick(thread.id)}
                     className="p-4 rounded-xl transition-all cursor-pointer group"
                     style={{ 
-                      backgroundColor: '#f9fafb',
+                      backgroundColor: '#f8faf9',
                       border: '1px solid #e5e7eb'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#f3f4f6';
-                      e.currentTarget.style.borderColor = '#6b7ba3';
+                      e.currentTarget.style.backgroundColor = '#f0fdf4';
+                      e.currentTarget.style.borderColor = '#10b981';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#f9fafb';
+                      e.currentTarget.style.backgroundColor = '#f8faf9';
                       e.currentTarget.style.borderColor = '#e5e7eb';
                     }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-1">
-                          <h3 className="font-semibold text-base" style={{ color: '#1a1a1a' }}>
-                            {thread.topic || thread.title || 'Untitled Generation'}
+                          <h3 className="font-semibold text-base" style={{ color: '#0f1a14' }}>
+                            {thread.title || 'Untitled Generation'}
                           </h3>
                           <span
                             className={`px-2 py-0.5 rounded-full text-xs font-medium ${thread.status === 'processing' ? 'flex items-center gap-1' : ''}`}
                             style={{
                               backgroundColor: thread.status === 'processing'
-                                ? 'rgba(107, 123, 163, 0.2)'
-                                : thread.status === 'complete' || thread.status === 'published'
+                                ? 'rgba(16, 185, 129, 0.15)'
+                                : thread.status === 'completed'
                                 ? 'rgba(16, 185, 129, 0.1)'
                                 : 'rgba(245, 158, 11, 0.1)',
                               color: thread.status === 'processing'
-                                ? '#6b7ba3'
-                                : thread.status === 'complete' || thread.status === 'published'
+                                ? '#10b981'
+                                : thread.status === 'completed'
                                 ? '#10b981'
                                 : '#f59e0b',
                               border: thread.status === 'processing'
-                                ? '1px solid #6b7ba3'
-                                : thread.status === 'complete' || thread.status === 'published'
+                                ? '1px solid #10b981'
+                                : thread.status === 'completed'
                                 ? '1px solid rgba(16, 185, 129, 0.3)'
                                 : '1px solid rgba(245, 158, 11, 0.3)'
                             }}
                           >
                             {thread.status === 'processing' && <Loader2 className="w-3 h-3 animate-spin" />}
-                            {thread.status === 'processing' ? 'Processing' : thread.status === 'complete' ? 'Complete' : thread.status}
+                            {thread.status === 'processing' ? 'Processing' : thread.status === 'completed' ? 'Completed' : thread.status}
                           </span>
                         </div>
                         
                         {/* Preview snippet */}
-                        {thread.preview && (
+                        {thread.firstTweet && (
                           <p className="text-sm mb-2 line-clamp-1" style={{ color: '#6b7280' }}>
-                            {thread.preview}
+                            {thread.firstTweet}
                           </p>
                         )}
                         
@@ -317,12 +328,12 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                             <Clock className="w-3.5 h-3.5" />
                             {formatDate(thread.createdAt)}
                           </span>
-                          {thread.tweets > 0 && (
+                          {thread.tweetCount && thread.tweetCount > 0 && (
                             <>
                               <span>•</span>
                               <span className="flex items-center gap-1">
                                 <FileText className="w-3.5 h-3.5" />
-                                {Array.isArray(thread.tweets) ? thread.tweets.length : thread.tweets} tweets
+                                {thread.tweetCount} posts
                               </span>
                             </>
                           )}
@@ -330,7 +341,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                       </div>
                       <ArrowRight 
                         className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" 
-                        style={{ color: '#6b7ba3' }} 
+                        style={{ color: '#10b981' }} 
                       />
                     </div>
                   </motion.div>

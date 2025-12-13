@@ -1,6 +1,6 @@
 import { apiService } from '../lib/apiService';
 import toast from 'react-hot-toast';
-import { updateThreadInList, addThreadToList } from '../utils/threadUtils';
+import { firestoreThreadService } from './firestoreThreadService';
 
 interface PollingJob {
   jobId: string;
@@ -41,55 +41,47 @@ class JobPollingService {
       try {
         const status = await apiService.getJob(jobId);
         
-        if (status.status !== 'completed' && status.status !== 'failed') {
-          // Update progress for processing posts
-          updateThreadInList(jobId, {
-            progress: status.progress || 0
-          });
+        // Get user ID from localStorage
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+          console.warn('No user ID found for job polling');
+          continue;
         }
         
         if (status.status === 'completed' && status.posts) {
           // Count total posts across all formats
           const postsData = status.posts as Record<string, string[]>;
           const totalPosts = Object.values(postsData).reduce((sum, posts) => sum + posts.length, 0);
-          const firstPost = Object.values(postsData)[0]?.[0] || 'Posts generated successfully';
+          const firstPost = Object.values(postsData).flat()[0] || 'Posts generated successfully';
           
-          // Update existing thread to complete status
-          const wasUpdated = updateThreadInList(jobId, {
-            status: 'complete',
-            tweets: totalPosts,
-            result: status,
-            progress: 100,
-            preview: firstPost.substring(0, 100)
-          });
-          
-          // Fallback: If thread doesn't exist, create it
-          if (!wasUpdated) {
-            addThreadToList({
-              id: jobId,
-              topic: job.topic,
-              title: job.topic,
-              status: 'complete',
-              createdAt: new Date().toISOString(),
-              tweets: totalPosts,
-              result: status,
-              progress: 100,
-              preview: firstPost.substring(0, 100)
+          // Update thread in Firestore
+          try {
+            await firestoreThreadService.updateThread(jobId, userId, {
+              status: 'completed',
+              posts: status.posts,
+              tweetCount: totalPosts,
+              firstTweet: firstPost.substring(0, 100),
             });
+            console.log('✅ Thread updated in Firestore:', jobId);
+          } catch (firestoreError) {
+            console.error('Failed to update thread in Firestore:', firestoreError);
           }
           
-          // Only show toast once
           toast.success(`✅ "${job.topic}" generated successfully!`, {
             duration: 5000,
           });
           job.onComplete(status);
           this.stopPolling(jobId);
         } else if (status.status === 'failed') {
-          // Update thread status to failed
-          updateThreadInList(jobId, {
-            status: 'failed',
-            progress: 0
-          });
+          // Update thread status to failed in Firestore
+          try {
+            await firestoreThreadService.updateThread(jobId, userId, {
+              status: 'failed',
+              error: status.error || 'Generation failed',
+            });
+          } catch (firestoreError) {
+            console.error('Failed to update failed thread in Firestore:', firestoreError);
+          }
           
           toast.error(`❌ Failed to generate "${job.topic}"`, {
             duration: 5000,

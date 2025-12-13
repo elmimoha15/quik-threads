@@ -57,7 +57,7 @@ export function WhyDifferent() {
               className="flex gap-6 p-6 rounded-2xl hover:bg-gray-50 transition-colors duration-300 group"
             >
               <div className="flex-shrink-0">
-                <div className="w-14 h-14 bg-gradient-to-br from-[#516289] to-[#3d4a63] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <feature.icon className="w-7 h-7 text-white" />
                 </div>
               </div>
@@ -77,10 +77,10 @@ export function WhyDifferent() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="bg-gradient-to-br from-[#516289] to-[#3d4a63] rounded-3xl p-12 text-white relative overflow-hidden"
+          className="bg-gradient-to-br from-[#0f1a14] to-[#1a2e23] rounded-3xl p-12 text-white relative overflow-hidden"
         >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl" />
 
           <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
             <div>

@@ -185,7 +185,7 @@ export default function Processing({ onNavigate }: ProcessingProps) {
               <div className="max-w-2xl mx-auto mb-4">
                 <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
                   <motion.div
-                    className="bg-gradient-to-r from-primary to-blue-600 h-3 rounded-full"
+                    className="bg-gradient-to-r from-primary to-emerald-600 h-3 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.5 }}

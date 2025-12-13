@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json"
   },
   "dependencies": {
+    "@polar-sh/sdk": "^0.41.5",
     "firebase": "^12.5.0",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.344.0",

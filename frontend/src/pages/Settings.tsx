@@ -74,16 +74,16 @@ export default function Settings({ onNavigate }: SettingsProps) {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f5f5f5' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#f8faf9' }}>
       <Sidebar currentPage="settings" onNavigate={onNavigate} />
 
       <div className="ml-64 p-8">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-8" style={{ color: '#1a1a1a' }}>Settings</h1>
+          <h1 className="text-4xl font-bold mb-8" style={{ color: '#0f1a14' }}>Settings</h1>
 
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#6b7ba3' }} />
+              <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#10b981' }} />
             </div>
           ) : (
             <div className="space-y-6">
@@ -116,10 +116,10 @@ export default function Settings({ onNavigate }: SettingsProps) {
                   boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
                 }}
               >
-                <h2 className="text-xl font-bold mb-6" style={{ color: '#1a1a1a' }}>Profile Information</h2>
+                <h2 className="text-xl font-bold mb-6" style={{ color: '#0f1a14' }}>Profile Information</h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: '#1a1a1a' }}>
+                    <label className="block text-sm font-medium mb-2" style={{ color: '#0f1a14' }}>
                       Full Name
                     </label>
                     <div className="relative">
@@ -132,13 +132,13 @@ export default function Settings({ onNavigate }: SettingsProps) {
                         style={{
                           backgroundColor: '#ffffff',
                           border: '1px solid #e5e7eb',
-                          color: '#1a1a1a'
+                          color: '#0f1a14'
                         }}
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: '#1a1a1a' }}>
+                    <label className="block text-sm font-medium mb-2" style={{ color: '#0f1a14' }}>
                       Email
                     </label>
                     <div className="relative">
@@ -163,7 +163,7 @@ export default function Settings({ onNavigate }: SettingsProps) {
                     onClick={handleSave}
                     disabled={saving}
                     className="px-6 py-3 rounded-xl font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-white"
-                    style={{ backgroundColor: '#6b7ba3' }}
+                    style={{ backgroundColor: '#10b981' }}
                   >
                     {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                     {saving ? 'Saving...' : 'Save Changes'}
@@ -181,7 +181,7 @@ export default function Settings({ onNavigate }: SettingsProps) {
                 boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
               }}
             >
-              <h2 className="text-xl font-bold mb-6" style={{ color: '#1a1a1a' }}>AI Preferences</h2>
+              <h2 className="text-xl font-bold mb-6" style={{ color: '#0f1a14' }}>AI Preferences</h2>
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium mb-3" style={{ color: '#6b7280' }}>
@@ -194,9 +194,9 @@ export default function Settings({ onNavigate }: SettingsProps) {
                         onClick={() => setTone(t.toLowerCase())}
                         className="py-3 px-4 rounded-xl font-medium transition capitalize text-white"
                         style={{
-                          backgroundColor: tone === t.toLowerCase() ? '#6b7ba3' : 'transparent',
-                          border: `2px solid ${tone === t.toLowerCase() ? '#6b7ba3' : '#e5e7eb'}`,
-                          color: tone === t.toLowerCase() ? '#ffffff' : '#1a1a1a'
+                          backgroundColor: tone === t.toLowerCase() ? '#10b981' : 'transparent',
+                          border: `2px solid ${tone === t.toLowerCase() ? '#10b981' : '#e5e7eb'}`,
+                          color: tone === t.toLowerCase() ? '#ffffff' : '#0f1a14'
                         }}
                       >
                         {t}
@@ -210,7 +210,7 @@ export default function Settings({ onNavigate }: SettingsProps) {
                   </label>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm" style={{ color: '#6b7280' }}>Conservative</span>
-                    <span className="text-sm font-bold" style={{ color: '#6b7ba3' }}>70%</span>
+                    <span className="text-sm font-bold" style={{ color: '#10b981' }}>70%</span>
                     <span className="text-sm" style={{ color: '#6b7280' }}>Creative</span>
                   </div>
                   <input
@@ -219,7 +219,7 @@ export default function Settings({ onNavigate }: SettingsProps) {
                     max="100"
                     defaultValue="70"
                     className="w-full"
-                    style={{ accentColor: '#6b7ba3' }}
+                    style={{ accentColor: '#10b981' }}
                   />
                   <div className="flex justify-between mt-2">
                     <span className="text-xs" style={{ color: '#9ca3af' }}>Conservative</span>
@@ -240,7 +240,7 @@ export default function Settings({ onNavigate }: SettingsProps) {
                 boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
               }}
             >
-              <h2 className="text-xl font-bold mb-6" style={{ color: '#1a1a1a' }}>Appearance</h2>
+              <h2 className="text-xl font-bold mb-6" style={{ color: '#0f1a14' }}>Appearance</h2>
               <div>
                 <label className="block text-sm font-medium mb-3" style={{ color: '#6b7280' }}>
                   Theme
@@ -249,8 +249,8 @@ export default function Settings({ onNavigate }: SettingsProps) {
                   <button
                     className="flex-1 py-4 rounded-xl font-medium transition text-white"
                     style={{
-                      backgroundColor: '#6b7ba3',
-                      border: '2px solid #6b7ba3'
+                      backgroundColor: '#10b981',
+                      border: '2px solid #10b981'
                     }}
                   >
                     Light Mode
@@ -266,7 +266,7 @@ export default function Settings({ onNavigate }: SettingsProps) {
               className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all"
             >
               <h2 className="text-xl font-bold mb-6 text-foreground">Current Plan</h2>
-              <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-primary/10 to-blue-100 border border-primary/20">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-primary/10 to-emerald-100 border border-primary/20">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                     <Sparkles className="w-6 h-6 text-primary-foreground" />

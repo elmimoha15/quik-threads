@@ -30,6 +30,13 @@ service cloud.firestore {
       allow write: if false; // Only backend can write
     }
     
+    // Threads collection - users can read/write their own threads
+    match /threads/{threadId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
     // Analytics cache - users can only read their own analytics
     match /analytics-cache/{userId} {
       allow read: if isOwner(userId);
